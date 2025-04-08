@@ -535,7 +535,6 @@
     
     // Form validasyonu
     if (!form.checkValidity()) {
-      e.stopImmediatePropagation();
       form.classList.add('was-validated');
       return;
     }
@@ -546,15 +545,12 @@
       submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Gönderiliyor...';
       
       const formData = {
-        name: document.getElementById('name').value.trim(),
-        phone: document.getElementById('phone').value.trim(),
-        subject: document.getElementById('subject').value.trim(),
-        email: document.getElementById('email').value.trim(),
-        message: document.getElementById('message').value.trim(),
-        timestamp: new Date().toISOString()
+        name: document.getElementById('name').value,
+        phone: document.getElementById('phone').value,
+        subject: document.getElementById('subject').value,
+        email: document.getElementById('email').value,
+        message: document.getElementById('message').value
       };
-      
-      console.log("Form verileri:", formData); // Debug için
       
       const success = await saveContactForm(formData);
       
