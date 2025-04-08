@@ -460,86 +460,130 @@
   </section>
   <!-- end blog section -->
 
-  <!-- contact section -->
-  <section class="contact_section ">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-md-6 px-0">
-          <div class="img-box ">
-            <img src="images/contact-img.jpg" class="box_img" alt="İletişim">
-          </div>
+<!-- contact section -->
+<section class="contact_section">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-6 px-0">
+        <div class="img-box">
+          <img src="images/contact-img.jpg" class="box_img" alt="İletişim">
         </div>
-        <div class="col-md-5 mx-auto">
-          <div class="form_container">
-            <div class="heading_container heading_center">
-              <h2>Bize Ulaşın</h2>
-            </div>
-            <form id="contactForm">
-              <div class="form-row">
-                <div class="form-group col">
-                  <input type="text" class="form-control" id="name" placeholder="Adınız Soyadınız" required />
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="form-group col-lg-6">
-                  <input type="text" class="form-control" id="phone" placeholder="Telefon Numaranız" required />
-                </div>
-                <div class="form-group col-lg-6">
-                  <select id="subject" class="form-control wide" required>
-                    <option value="">Konu Seçiniz</option>
-                    <option value="Üyelik">Üyelik</option>
-                    <option value="Etkinlikler">Etkinlikler</option>
-                    <option value="Sponsorluk">Sponsorluk</option>
-                    <option value="Diğer">Diğer</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="form-group col">
-                  <input type="email" class="form-control" id="email" placeholder="E-posta Adresiniz" required />
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="form-group col">
-                  <textarea class="form-control message-box" id="message" placeholder="Mesajınız" required></textarea>
-                </div>
-              </div>
-              <div class="btn_box">
-                <button type="submit">
-                  GÖNDER
-                </button>
-              </div>
-            </form>
+      </div>
+      <div class="col-md-5 mx-auto">
+        <div class="form_container">
+          <div class="heading_container heading_center">
+            <h2>Bize Ulaşın</h2>
           </div>
+          <form id="contactForm" novalidate>
+            <div class="form-row">
+              <div class="form-group col">
+                <input type="text" class="form-control" id="name" placeholder="Adınız Soyadınız" required />
+                <div class="invalid-feedback">Lütfen adınızı giriniz</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-lg-6">
+                <input type="tel" class="form-control" id="phone" placeholder="Telefon Numaranız" required />
+                <div class="invalid-feedback">Lütfen telefon numaranızı giriniz</div>
+              </div>
+              <div class="form-group col-lg-6">
+                <select id="subject" class="form-control wide" required>
+                  <option value="" disabled selected>Konu Seçiniz</option>
+                  <option value="Üyelik">Üyelik</option>
+                  <option value="Etkinlikler">Etkinlikler</option>
+                  <option value="Sponsorluk">Sponsorluk</option>
+                  <option value="Diğer">Diğer</option>
+                </select>
+                <div class="invalid-feedback">Lütfen bir konu seçiniz</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col">
+                <input type="email" class="form-control" id="email" placeholder="E-posta Adresiniz" required />
+                <div class="invalid-feedback">Lütfen geçerli bir e-posta adresi giriniz</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col">
+                <textarea class="form-control message-box" id="message" placeholder="Mesajınız" required></textarea>
+                <div class="invalid-feedback">Lütfen mesajınızı yazınız</div>
+              </div>
+            </div>
+            <div class="btn_box">
+              <button type="submit" id="submitBtn">
+                GÖNDER
+              </button>
+            </div>
+            <div id="formAlert" class="alert mt-3 d-none"></div>
+          </form>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <script type="module">
-    import { saveContactForm } from './firebase.js';
+<script type="module">
+  import { saveContactForm } from './firebase.js';
+  
+  document.getElementById('contactForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    e.stopPropagation();
     
-    document.getElementById('contactForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
+    const form = e.currentTarget;
+    const submitBtn = document.getElementById('submitBtn');
+    const alertDiv = document.getElementById('formAlert');
+    
+    // Form validasyonu
+    if (!form.checkValidity()) {
+      e.stopImmediatePropagation();
+      form.classList.add('was-validated');
+      return;
+    }
+    
+    try {
+      // Butonu devre dışı bırak
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Gönderiliyor...';
       
       const formData = {
-        name: document.getElementById('name').value,
-        phone: document.getElementById('phone').value,
-        subject: document.getElementById('subject').value,
-        email: document.getElementById('email').value,
-        message: document.getElementById('message').value
+        name: document.getElementById('name').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        subject: document.getElementById('subject').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        message: document.getElementById('message').value.trim(),
+        timestamp: new Date().toISOString()
       };
+      
+      console.log("Form verileri:", formData); // Debug için
       
       const success = await saveContactForm(formData);
       
       if (success) {
-        alert('Mesajınız başarıyla gönderildi!');
-        document.getElementById('contactForm').reset();
+        showAlert(alertDiv, 'Mesajınız başarıyla gönderildi!', 'success');
+        form.reset();
+        form.classList.remove('was-validated');
       } else {
-        alert('Mesaj gönderilirken bir hata oluştu. Lütfen tekrar deneyin.');
+        showAlert(alertDiv, 'Mesaj gönderilirken bir hata oluştu. Lütfen tekrar deneyin.', 'danger');
       }
-    });
-  </script>
+    } catch (error) {
+      console.error("Hata:", error);
+      showAlert(alertDiv, `Bir hata oluştu: ${error.message}`, 'danger');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'GÖNDER';
+    }
+  });
+  
+  function showAlert(element, message, type) {
+    element.textContent = message;
+    element.className = `alert alert-${type} mt-3`;
+    element.classList.remove('d-none');
+    
+    setTimeout(() => {
+      element.classList.add('d-none');
+    }, 5000);
+  }
+</script>
   <!-- end contact section -->
 
   <!-- info section -->
@@ -636,8 +680,6 @@
     </div>
   </footer>
   <!-- footer section -->
-  <!-- firebase -->
-  <script src="/js/firebase.js"></script>
   <!-- jQery -->
   <script src="js/jquery-3.4.1.min.js"></script>
   <!-- popper js -->
