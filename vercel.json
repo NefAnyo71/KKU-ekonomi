@@ -1,0 +1,9 @@
+{
+    "routes": [
+      {
+        "src": "/js/.*",
+        "dest": "/public/js/",
+        "headers": { "Cache-Control": "public, max-age=3600" }
+      }
+    ]
+  }
