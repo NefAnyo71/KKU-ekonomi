@@ -2,91 +2,43 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { getAnalytics, isSupported } from 'firebase/analytics';
 
+// Firebase API Yapılandırması
+const firebaseConfig = {
+  apiKey: "AIzaSyAZmlsg39WMW_B-4MpQ2HaEv7FQPvXjoq8",
+  authDomain: "ekos-62f46.firebaseapp.com",
+  databaseURL: "https://ekos-62f46-default-rtdb.firebaseio.com",
+  projectId: "ekos-62f46",
+  storageBucket: "ekos-62f46.firebasestorage.app",
+  messagingSenderId: "83588029480",
+  appId: "1:83588029480:web:c21d4536c7d6ee69b8691d",
+  measurementId: "G-ZV5S3CK9YJ"
+};
+
 // Firebase bağlantı durumu için değişkenler
 let app;
 let db;
 let analytics;
 let isInitialized = false;
-let initializationPromise = null;
 
-// Proxy sunucu URL'si
-const PROXY_SERVER_URL = 'https://proxyserver-flax.vercel.app';
-
-// Firebase başlatma fonksiyonu (singleton pattern)
+// Firebase başlatma fonksiyonu
 async function initializeFirebase() {
-  if (isInitialized) return true;
-  if (initializationPromise) return initializationPromise;
+  if (isInitialized) return;
 
   try {
-    initializationPromise = (async () => {
-      const config = await fetchFirebaseConfig();
-      
-      // Gerekli alanları kontrol et
-      validateFirebaseConfig(config);
-      
-      app = initializeApp(config);
-      db = getFirestore(app);
-      
-      // Analytics sadece destekleniyorsa başlat
-      if (await isSupported()) {
-        analytics = getAnalytics(app);
-      }
-      
-      isInitialized = true;
-      console.log("Firebase başarıyla başlatıldı | ProjectID:", config.projectId);
-      return true;
-    })();
-
-    return await initializationPromise;
+    // Firebase'i başlat
+    app = initializeApp(firebaseConfig);
+    db = getFirestore(app);
+    
+    // Analytics sadece destekleniyorsa başlat
+    if (await isSupported()) {
+      analytics = getAnalytics(app);
+    }
+    
+    isInitialized = true;
+    console.log("Firebase başarıyla başlatıldı");
   } catch (error) {
     console.error("Firebase başlatma hatası:", error);
-    isInitialized = false;
-    initializationPromise = null;
     throw error;
-  }
-}
-
-// Firebase konfigürasyon doğrulama
-function validateFirebaseConfig(config) {
-  const requiredFields = ['apiKey', 'authDomain', 'projectId', 'appId'];
-  const missingFields = requiredFields.filter(field => !config[field]);
-  
-  if (missingFields.length > 0) {
-    throw new Error(`Eksik Firebase konfigürasyon alanları: ${missingFields.join(', ')}`);
-  }
-
-  // ProjectID format kontrolü
-  if (!/^[a-z0-9-]+$/.test(config.projectId)) {
-    throw new Error(`Geçersiz projectId formatı: ${config.projectId}`);
-  }
-}
-
-// Proxy üzerinden Firebase config alma
-async function fetchFirebaseConfig() {
-  try {
-    const response = await fetch(`${PROXY_SERVER_URL}/api/config`, {
-      method: 'GET',
-      headers: { 
-        'Accept': 'application/json',
-        'Cache-Control': 'no-cache'
-      },
-      cache: 'no-store'
-    });
-
-    if (!response.ok) {
-      throw new Error(`Config alınamadı. HTTP Status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    
-    if (data.status !== 'success' || !data.data) {
-      throw new Error('Geçersiz config yanıt formatı');
-    }
-
-    return data.data;
-  } catch (error) {
-    console.error("Config alma hatası:", error);
-    throw new Error(`Proxy sunucudan konfigürasyon alınamadı: ${error.message}`);
   }
 }
 
@@ -108,15 +60,14 @@ async function saveContactForm(data) {
       subject: data.subject.trim(),
       email: data.email.trim(),
       message: data.message.trim(),
-      timestamp: serverTimestamp(),
-      ipAddress: await getClientIP() // İsteğe bağlı
+      timestamp: serverTimestamp()
     });
     
-    console.log("Firestore kaydı başarılı. Doküman ID:", docRef.id);
+    console.log("Doküman başarıyla oluşturuldu. ID:", docRef.id);
     return { success: true, docId: docRef.id };
     
   } catch (error) {
-    console.error("Firestore kayıt hatası:", {
+    console.error("Kayıt hatası:", {
       error: error.message,
       code: error.code || 'N/A',
       stack: error.stack
@@ -159,20 +110,7 @@ function validateFormData(data) {
   }
 }
 
-// İstemci IP adresini alma (isteğe bağlı)
-async function getClientIP() {
-  try {
-    const response = await fetch('https://api.ipify.org?format=json', { timeout: 2000 });
-    const data = await response.json();
-    return data.ip || 'unknown';
-  } catch (error) {
-    console.warn("IP adresi alınamadı:", error);
-    return 'unknown';
-  }
-}
-
 export { 
   initializeFirebase, 
-  saveContactForm,
-  fetchFirebaseConfig as getFirebaseConfig
+  saveContactForm
 };
