@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import { getAnalytics } from 'firebase/analytics';
 
 let app;
@@ -22,8 +22,37 @@ async function getFirebaseConfig() {
 }
 
 async function initializeFirebase() {
-  const config = await getFirebaseConfig();
-  app = initializeApp(config);
-  db = getFirestore(app);
-  analytics = getAnalytics(app);
+  try {
+    const config = await getFirebaseConfig();
+    app = initializeApp(config);
+    db = getFirestore(app);
+    analytics = getAnalytics(app);
+    console.log("Firebase initialized successfully");
+  } catch (error) {
+    console.error("Firebase initialization error:", error);
+  }
 }
+
+// İletişim formu verilerini kaydetme fonksiyonu
+async function saveContactForm(data) {
+  try {
+    if (!db) await initializeFirebase();
+    
+    const docRef = await addDoc(collection(db, "internetsitesi"), {
+      name: data.name,
+      phone: data.phone,
+      subject: data.subject,
+      email: data.email,
+      message: data.message,
+      timestamp: new Date()
+    });
+    
+    console.log("Document written with ID: ", docRef.id);
+    return true;
+  } catch (error) {
+    console.error("Error adding document: ", error);
+    return false;
+  }
+}
+
+export { initializeFirebase, saveContactForm };
