@@ -1,0 +1,237 @@
+/* Team Hero Section */
+.team_hero_content {
+    display: flex;
+    align-items: center;
+    height: calc(100vh - 140px);
+    color: #fff;
+    text-align: center;
+  }
+  
+  .team_hero_content .detail-box h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    animation: fadeInDown 1s ease;
+  }
+  
+  .team_hero_content .detail-box p {
+    font-size: 1.3rem;
+    margin-bottom: 30px;
+    animation: fadeIn 1.5s ease;
+  }
+  
+  .team_hero_content .btn-box .btn1 {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 30px;
+    background-color: #f0b913;
+    color: #fff;
+    border-radius: 30px;
+    transition: all 0.3s;
+    animation: fadeInUp 1s ease;
+  }
+  
+  .team_hero_content .btn-box .btn1:hover {
+    background-color: #d8a711;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+  
+  .team_hero_content .btn-box .btn1 i {
+    margin-left: 8px;
+    transition: all 0.3s;
+  }
+  
+  .team_hero_content .btn-box .btn1:hover i {
+    transform: translateY(3px);
+  }
+  
+  /* Team Section */
+  .team_section {
+    padding: 80px 0;
+    background-color: #f9f9f9;
+  }
+  
+  .team_category {
+    margin-bottom: 60px;
+  }
+  
+  .team_category h3 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 30px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #eee;
+    text-align: center;
+    position: relative;
+  }
+  
+  .team_category h3::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: #f0b913;
+  }
+  
+  .team_section .box {
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    height: 100%;
+    margin-bottom: 30px;
+  }
+  
+  .team_section .box:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  }
+  
+  .team_section .img-box {
+    height: 250px;
+    overflow: hidden;
+  }
+  
+  .team_section .img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.5s ease;
+  }
+  
+  .team_section .box:hover .img-box img {
+    transform: scale(1.1);
+  }
+  
+  .team_section .detail-box {
+    padding: 25px;
+    text-align: center;
+  }
+  
+  .team_section .detail-box h5 {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+    font-size: 1.2rem;
+  }
+  
+  .team_section .detail-box h6 {
+    color: #f0b913;
+    font-size: 1rem;
+    margin-bottom: 15px;
+  }
+  
+  .team_section .social-box {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+  }
+  
+  .team_section .social-box a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: #f5f5f5;
+    color: #333;
+    margin: 0 5px;
+    transition: all 0.3s ease;
+  }
+  
+  .team_section .social-box a:hover {
+    background: #f0b913;
+    color: #fff;
+    transform: translateY(-3px);
+  }
+  
+  /* Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 991px) {
+    .team_hero_content .detail-box h1 {
+      font-size: 2.8rem;
+    }
+    
+    .team_hero_content .detail-box p {
+      font-size: 1.1rem;
+    }
+    
+    .team_section .img-box {
+      height: 220px;
+    }
+  }
+  
+  @media (max-width: 767px) {
+    .team_hero_content {
+      height: calc(100vh - 100px);
+    }
+    
+    .team_hero_content .detail-box h1 {
+      font-size: 2.2rem;
+    }
+    
+    .team_section {
+      padding: 50px 0;
+    }
+    
+    .team_section .img-box {
+      height: 200px;
+    }
+  }
+  
+  @media (max-width: 575px) {
+    .team_hero_content .detail-box h1 {
+      font-size: 1.8rem;
+    }
+    
+    .team_hero_content .detail-box p {
+      font-size: 1rem;
+    }
+    
+    .team_section .img-box {
+      height: 180px;
+    }
+    
+    .team_section .detail-box {
+      padding: 15px;
+    }
+    
+    .team_category h3 {
+      font-size: 24px;
+    }
+  }
