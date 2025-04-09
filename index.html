@@ -627,82 +627,93 @@
   <script src="js/custom.js"></script>
   
   
-  <!-- Firebase SDK v9+ (Modern Modüler API) -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+<!-- Firebase SDK v9+ (Modern Modüler API) -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
 
-  <script type="module">
-    // Proxy server üzerinden Firebase yapılandırma bilgilerini al
-    async function fetchFirebaseConfig() {
-      const response = await fetch('https://proxyserver-flax.vercel.app/');
-      const config = await response.json();
-      return config;
-    }
-  
-    // Firebase'i başlat
-    async function initializeFirebase() {
-      try {
-        const firebaseConfig = await fetchFirebaseConfig();
-  
-        // Firebase yapılandırması
-        const { initializeApp } = await import('https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js');
-        const { getFirestore, collection, addDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js');
-  
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-  
-        // İletişim Formu Gönderimi
-        document.getElementById('feedback').addEventListener('submit', async function(e) {
-          e.preventDefault();
-  
-          const form = this;
-  
-          // Formun geçerliliğini kontrol et
-          if (!form.checkValidity()) {
-            e.stopPropagation();
-            form.classList.add('was-validated');
-            return;
-          }
-  
-          const name = document.getElementById('name').value;
-          const email = document.getElementById('email').value;
-          const phone = document.getElementById('phone').value;
-          const subject = document.getElementById('subject').value;
-          const message = document.getElementById('message').value;
-  
-          try {
-            // Firestore'a veri ekle
-            await addDoc(collection(db, "feedback"), {
-              name: name,
-              email: email,
-              phone: phone,
-              subject: subject,
-              message: message,
-              timestamp: serverTimestamp()
-            });
-  
-            alert('Mesajınız başarıyla gönderildi!');
-            form.reset();
-            form.classList.remove('was-validated');
-          } catch (error) {
-            console.error('Error adding document: ', error);
-            alert('Mesaj gönderilirken bir hata oluştu: ' + error.message);
-          }
-        });
-  
-        // Footer'a geçerli yılı ekle
-        document.getElementById('displayYear').textContent = new Date().getFullYear();
-      } catch (error) {
-        console.error('Firebase başlatılırken bir hata oluştu:', error);
+<script type="module">
+  // Proxy server üzerinden Firebase yapılandırma bilgilerini al
+  async function fetchFirebaseConfig() {
+    try {
+      const response = await fetch('https://proxyserver-flax.vercel.app/api/config');  // Proxy server endpoint
+      if (!response.ok) {
+        throw new Error('Firebase yapılandırması alınırken bir hata oluştu.');
       }
+      const config = await response.json();
+      return config.data;  // Firebase yapılandırmasını döndürüyoruz
+    } catch (error) {
+      console.error('Hata:', error);
+      alert('Yapılandırma bilgileri alınırken bir hata oluştu.');
+      return null;
     }
-  
-    // Firebase'i başlat
-    initializeFirebase();
-  </script>
-  
+  }
 
+  // Firebase'i başlat
+  async function initializeFirebase() {
+    const firebaseConfig = await fetchFirebaseConfig();
+
+    if (!firebaseConfig) {
+      return;
+    }
+
+    try {
+      // Firebase SDK'yı dinamik olarak import et
+      const { initializeApp } = await import('https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js');
+      const { getFirestore, collection, addDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js');
+
+      // Firebase'i başlat
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      // İletişim Formu Gönderimi
+      document.getElementById('feedback').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const form = this;
+
+        // Formun geçerliliğini kontrol et
+        if (!form.checkValidity()) {
+          e.stopPropagation();
+          form.classList.add('was-validated');
+          return;
+        }
+
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const phone = document.getElementById('phone').value;
+        const subject = document.getElementById('subject').value;
+        const message = document.getElementById('message').value;
+
+        try {
+          // Firestore'a veri ekle
+          await addDoc(collection(db, "feedback"), {
+            name: name,
+            email: email,
+            phone: phone,
+            subject: subject,
+            message: message,
+            timestamp: serverTimestamp()
+          });
+
+          alert('Mesajınız başarıyla gönderildi!');
+          form.reset();
+          form.classList.remove('was-validated');
+        } catch (error) {
+          console.error('Error adding document: ', error);
+          alert('Mesaj gönderilirken bir hata oluştu: ' + error.message);
+        }
+      });
+
+      // Footer'a geçerli yılı ekle
+      document.getElementById('displayYear').textContent = new Date().getFullYear();
+    } catch (error) {
+      console.error('Firebase başlatılırken bir hata oluştu:', error);
+    }
+  }
+
+  // Firebase'i başlat
+  initializeFirebase();
+</script>
 </body>
-
 </html>
