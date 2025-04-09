@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topluluk Yönetim Paneli</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="icon" type="image/png" href="/images/favicon.png">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <!-- LOGIN FORM -->
+    <div id="login-container" class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <img src="/images/favicon.png" alt="Logo" class="logo">
+                <h3>Yönetici Girişi</h3>
+            </div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Şifre</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Giriş Yap</button>
+                <div id="login-error" class="error-message"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADMIN PANEL (hidden by default) -->
+    <div id="admin-panel" style="display: none;">
+        <!-- Your existing admin panel content here -->
+        <!-- ... -->
+    </div>
+
+    <script>
+        // Firebase configuration from proxy server
+        async function fetchFirebaseConfig() {
+            try {
+                const response = await fetch('https://proxyserver-flax.vercel.app/api/config');
+                if (!response.ok) {
+                    throw new Error('Firebase config could not be fetched');
+                }
+                const config = await response.json();
+                return config.data || config;
+            } catch (error) {
+                console.error('Config fetch error:', error);
+                document.getElementById('login-error').textContent = 'Yapılandırma hatası. Lütfen daha sonra tekrar deneyin.';
+                return null;
+            }
+        }
+
+        // Initialize Firebase
+        async function initializeFirebase() {
+            const firebaseConfig = await fetchFirebaseConfig();
+            
+            if (!firebaseConfig) {
+                return null;
+            }
+
+            try {
+                // Initialize Firebase
+                const app = firebase.initializeApp(firebaseConfig);
+                const auth = firebase.auth();
+                const db = firebase.firestore();
+                
+                return { app, auth, db };
+            } catch (error) {
+                console.error('Firebase init error:', error);
+                document.getElementById('login-error').textContent = 'Bağlantı hatası. Lütfen daha sonra tekrar deneyin.';
+                return null;
+            }
+        }
+
+        // Main initialization
+        (async function() {
+            const firebaseApp = await initializeFirebase();
+            
+            if (!firebaseApp) {
+                return;
+            }
+
+            const { auth, db } = firebaseApp;
+
+            // Login form handler
+            document.getElementById('login-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+                const errorElement = document.getElementById('login-error');
+
+                try {
+                    const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                    const user = userCredential.user;
+                    
+                    // Check if user is admin
+                    const isAdmin = await checkAdminStatus(db, user.uid);
+                    
+                    if (isAdmin) {
+                        // Show admin panel
+                        document.getElementById('login-container').style.display = 'none';
+                        document.getElementById('admin-panel').style.display = 'flex';
+                        // Initialize your admin panel here
+                        initializeAdminPanel();
+                    } else {
+                        await auth.signOut();
+                        throw new Error('Bu sayfaya erişim yetkiniz yok');
+                    }
+                } catch (error) {
+                    errorElement.textContent = error.message;
+                    console.error('Login error:', error);
+                }
+            });
+
+            // Check auth state on page load
+            auth.onAuthStateChanged(async (user) => {
+                if (user) {
+                    const isAdmin = await checkAdminStatus(db, user.uid);
+                    if (isAdmin) {
+                        document.getElementById('login-container').style.display = 'none';
+                        document.getElementById('admin-panel').style.display = 'flex';
+                        initializeAdminPanel();
+                    } else {
+                        await auth.signOut();
+                    }
+                }
+            });
+        })();
+
+        // Check if user is admin
+        async function checkAdminStatus(db, uid) {
+            try {
+                const doc = await db.collection('admins').doc(uid).get();
+                return doc.exists;
+            } catch (error) {
+                console.error('Admin check error:', error);
+                return false;
+            }
+        }
+
+        // Initialize admin panel functionality
+        function initializeAdminPanel() {
+            // Your existing admin panel JS code here
+            // ...
+            
+            // Example: Add logout functionality
+            document.querySelector('.logout-btn').addEventListener('click', async () => {
+                try {
+                    await firebase.auth().signOut();
+                    document.getElementById('admin-panel').style.display = 'none';
+                    document.getElementById('login-container').style.display = 'flex';
+                    document.getElementById('login-form').reset();
+                } catch (error) {
+                    console.error('Logout error:', error);
+                }
+            });
+        }
+
+        // Your existing showSection function
+        function showSection(sectionId) {
+            // ... existing implementation ...
+        }
+    </script>
+
+    <style>
+        /* LOGIN STYLES */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f9fc;
+        }
+
+        .login-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .login-header .logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .error-message {
+            color: #e74a3b;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        /* ADMIN PANEL LAYOUT */
+        #admin-panel {
+            display: flex;
+            min-height: 100vh;
+        }
+    </style>
+</body>
+</html>
