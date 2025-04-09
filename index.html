@@ -473,7 +473,7 @@
             <div class="heading_container heading_center">
               <h2>Bize Ulaşın</h2>
             </div>
-            <form id="contactForm" novalidate>
+            <form id="contactform" novalidate>
               <div class="form-row">
                 <div class="form-group col">
                   <input type="text" class="form-control" id="name" placeholder="Adınız Soyadınız" required minlength="2" />
@@ -518,66 +518,6 @@
     </div>
   </section>
 
-  <script>
-    // Firebase Config
-    const firebaseConfig = {
-      apiKey: "AIzaSyAZmlsg39WMW_B-4MpQ2HaEv7FQPvXjoq8",
-      authDomain: "ekos-62f46.firebaseapp.com",
-      databaseURL: "https://ekos-62f46-default-rtdb.firebaseio.com",
-      projectId: "ekos-62f46",
-      storageBucket: "ekos-62f46.appspot.com",
-      messagingSenderId: "83588029480",
-      appId: "1:83588029480:web:c21d4536c7d6ee69b8691d",
-      measurementId: "G-ZV5S3CK9YJ"
-    };
-  
-    // Firebase'ı başlat
-    firebase.initializeApp(firebaseConfig);
-    
-    // Firestore referansını al
-    const db = firebase.firestore();
-  
-    // Formu al
-    const form = document.getElementById('contactForm');
-    
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      
-      // Formun doğruluğunu kontrol et
-      if (!form.checkValidity()) {
-        e.stopPropagation();
-        form.classList.add('was-validated');
-        return;
-      }
-  
-      // Form verilerini al
-      const name = document.getElementById('name').value;
-      const phone = document.getElementById('phone').value;
-      const email = document.getElementById('email').value;
-      const subject = document.getElementById('subject').value;
-      const message = document.getElementById('message').value;
-      
-      // Firestore'a veri ekle
-      db.collection('ContactForms').add({
-        name: name,
-        phone: phone,
-        email: email,
-        subject: subject,
-        message: message,
-        date: new Date().toLocaleString()
-      })
-      .then(() => {
-        alert('Mesajınız başarıyla gönderildi!');
-        form.reset();
-        form.classList.remove('was-validated');
-      })
-      .catch((error) => {
-        alert('Bir hata oluştu: ' + error.message);
-      });
-    });
-  </script>
-  
-  <!-- end contact section -->
   <!-- info section -->
   <section class="info_section ">
     <div class="container">
@@ -672,7 +612,7 @@
     </div>
   </footer>
   <!-- footer section -->
-<!-- index.html inside -->
+
   <!-- jQery -->
   <script src="js/jquery-3.4.1.min.js"></script>
   <!-- popper js -->
@@ -685,9 +625,73 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js" integrity="sha256-Zr3vByTlMGQhvMfgkQ5BtWRSKBGa2QlspKYJnkjZTmo=" crossorigin="anonymous"></script>
   <!-- custom js -->
   <script src="js/custom.js"></script>
-  <!-- Firebase Download JDK -->
+  
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-analytics.js"></script>
+
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAZmlsg39WMW_B-4MpQ2HaEv7FQPvXjoq8",
+      authDomain: "ekos-62f46.firebaseapp.com",
+      databaseURL: "https://ekos-62f46-default-rtdb.firebaseio.com",
+      projectId: "ekos-62f46",
+      storageBucket: "ekos-62f46.appspot.com",
+      messagingSenderId: "83588029480",
+      appId: "1:83588029480:web:c21d4536c7d6ee69b8691d",
+      measurementId: "G-ZV5S3CK9YJ"
+    };
+
+    // Initialize Firebase
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+      firebase.analytics();
+    }
+    
+    const db = firebase.firestore();
+
+    // Contact Form Submission
+    document.getElementById('contactform').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const form = this;
+      
+      if (!form.checkValidity()) {
+        e.stopPropagation();
+        form.classList.add('was-validated');
+        return;
+      }
+
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const phone = document.getElementById('phone').value;
+      const subject = document.getElementById('subject').value;
+      const message = document.getElementById('message').value;
+
+      db.collection('contactforms').add({
+        name: name,
+        email: email,
+        phone: phone,
+        subject: subject,
+        message: message,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      })
+      .then(() => {
+        alert('Mesajınız başarıyla gönderildi!');
+        form.reset();
+        form.classList.remove('was-validated');
+      })
+      .catch((error) => {
+        console.error('Error adding document: ', error);
+        alert('Mesaj gönderilirken bir hata oluştu: ' + error.message);
+      });
+    });
+
+    // Display current year in footer
+    document.getElementById('displayYear').textContent = new Date().getFullYear();
+  </script>
 </body>
 
 </html>
