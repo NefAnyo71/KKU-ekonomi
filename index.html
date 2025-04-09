@@ -637,13 +637,13 @@
     try {
       const response = await fetch('https://proxyserver-flax.vercel.app/api/config');  
       if (!response.ok) {
-        throw new Error('Firebase yapılandırması alınırken bir hata oluştu.');
+        throw new Error('Firebase projen patladı uğraşıp durucan.');
       }
       const config = await response.json();
       return config.data;  
     } catch (error) {
       console.error('Hata:', error);
-      alert('Yapılandırma bilgileri alınırken bir hata oluştu.');
+      alert('Yapılandırma hatası oluştu.');
       return null;
     }
   }
