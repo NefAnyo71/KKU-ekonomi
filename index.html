@@ -460,151 +460,124 @@
   </section>
   <!-- end blog section -->
 
-<!-- contact section -->
-<section class="contact_section">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-6 px-0">
-        <div class="img-box">
-          <img src="images/contact-img.jpg" class="box_img" alt="İletişim">
-        </div>
-      </div>
-      <div class="col-md-5 mx-auto">
-        <div class="form_container">
-          <div class="heading_container heading_center">
-            <h2>Bize Ulaşın</h2>
+  <section class="contact_section">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-6 px-0">
+          <div class="img-box">
+            <img src="images/contact-img.jpg" class="box_img" alt="İletişim">
           </div>
-          <form id="contactForm" novalidate>
-            <div class="form-row">
-              <div class="form-group col">
-                <input type="text" class="form-control" id="name" placeholder="Adınız Soyadınız" required minlength="2" />
-                <div class="invalid-feedback">Lütfen geçerli bir ad soyad giriniz (en az 2 karakter)</div>
-              </div>
+        </div>
+        <div class="col-md-5 mx-auto">
+          <div class="form_container">
+            <div class="heading_container heading_center">
+              <h2>Bize Ulaşın</h2>
             </div>
-            <div class="form-row">
-              <div class="form-group col-lg-6">
-                <input type="tel" class="form-control" id="phone" placeholder="Telefon Numaranız" required pattern="[0-9]{10,11}" />
-                <div class="invalid-feedback">Lütfen geçerli bir telefon numarası giriniz (10-11 rakam)</div>
+            <form id="contactForm" novalidate>
+              <div class="form-row">
+                <div class="form-group col">
+                  <input type="text" class="form-control" id="name" placeholder="Adınız Soyadınız" required minlength="2" />
+                  <div class="invalid-feedback">Lütfen geçerli bir ad soyad giriniz (en az 2 karakter)</div>
+                </div>
               </div>
-              <div class="form-group col-lg-6">
-                <select id="subject" class="form-control wide" required>
-                  <option value="" disabled selected hidden>Konu Seçiniz</option>
-                  <option value="Üyelik">Üyelik</option>
-                  <option value="Etkinlikler">Etkinlikler</option>
-                  <option value="Sponsorluk">Sponsorluk</option>
-                  <option value="Diğer">Diğer</option>
-                </select>
-                <div class="invalid-feedback">Lütfen bir konu seçiniz</div>
+              <div class="form-row">
+                <div class="form-group col">
+                  <input type="email" class="form-control" id="email" placeholder="Email Adresiniz" required />
+                  <div class="invalid-feedback">Lütfen geçerli bir email adresi giriniz</div>
+                </div>
+              </div>              
+              <div class="form-row">
+                <div class="form-group col-lg-6">
+                  <input type="tel" class="form-control" id="phone" placeholder="Telefon Numaranız" required pattern="[0-9]{10,11}" />
+                  <div class="invalid-feedback">Lütfen geçerli bir telefon numarası giriniz (10-11 rakam)</div>
+                </div>
+                <div class="form-group col-lg-6">
+                  <select id="subject" class="form-control wide" required>
+                    <option value="" disabled selected hidden>Konu Seçiniz</option>
+                    <option value="Üyelik">Üyelik</option>
+                    <option value="Etkinlikler">Etkinlikler</option>
+                    <option value="Sponsorluk">Sponsorluk</option>
+                    <option value="Diğer">Diğer</option>
+                  </select>
+                  <div class="invalid-feedback">Lütfen bir konu seçiniz</div>
+                </div>
               </div>
-            </div>
-            <div class="form-row">
-              <div class="form-group col">
-                <input type="email" class="form-control" id="email" placeholder="E-posta Adresiniz" required />
-                <div class="invalid-feedback">Lütfen geçerli bir e-posta adresi giriniz</div>
+              <div class="form-row">
+                <div class="form-group col">
+                  <textarea class="form-control" id="message" rows="4" placeholder="Mesajınız" required minlength="10"></textarea>
+                  <div class="invalid-feedback">Lütfen en az 10 karakterden oluşan bir mesaj yazınız</div>
+                </div>
               </div>
-            </div>
-            <div class="form-row">
-              <div class="form-group col">
-                <textarea class="form-control message-box" id="message" placeholder="Mesajınız" required minlength="10"></textarea>
-                <div class="invalid-feedback">Lütfen en az 10 karakterlik bir mesaj yazınız</div>
+              <div class="btn-box">
+                <button type="submit" class="btn btn-primary">Gönder</button>
               </div>
-            </div>
-            <div class="btn_box">
-              <button type="submit" id="submitBtn" class="btn btn-primary">
-                GÖNDER
-              </button>
-            </div>
-            <div id="formAlert" class="alert mt-3 d-none" role="alert"></div>
-          </form>
+            </form>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<script type="module">
-  import { saveContactForm } from './js/firebase.js';
-  
-  // Form elementlerini cache'leme
-  const contactForm = document.getElementById('contactForm');
-  const submitBtn = document.getElementById('submitBtn');
-  const alertDiv = document.getElementById('formAlert');
-  
-  // Form gönderim işlemi
-  contactForm.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    // Form validasyonu
-    if (!contactForm.checkValidity()) {
-      contactForm.classList.add('was-validated');
-      return;
-    }
-    
-    try {
-      // Butonu devre dışı bırak ve yükleme göstergesi ekle
-      toggleSubmitButton(true);
-      
-      // Form verilerini topla
-      const formData = getFormData();
-      
-      // Firestore'a kaydet
-      const result = await saveContactForm(formData);
-      
-      if (result.success) {
-        showAlert('Mesajınız başarıyla gönderildi!', 'success');
-        resetForm();
-      } else {
-        throw new Error(result.error || 'Mesaj gönderilemedi');
-      }
-    } catch (error) {
-      console.error("Form gönderim hatası:", error);
-      showAlert(`Bir hata oluştu: ${error.message}`, 'danger');
-    } finally {
-      toggleSubmitButton(false);
-    }
-  });
-  
-  // Form verilerini alma
-  function getFormData() {
-    return {
-      name: document.getElementById('name').value.trim(),
-      phone: document.getElementById('phone').value.trim(),
-      subject: document.getElementById('subject').value.trim(),
-      email: document.getElementById('email').value.trim(),
-      message: document.getElementById('message').value.trim(),
-      timestamp: new Date().toISOString()
+  <script>
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyAZmlsg39WMW_B-4MpQ2HaEv7FQPvXjoq8",
+      authDomain: "ekos-62f46.firebaseapp.com",
+      databaseURL: "https://ekos-62f46-default-rtdb.firebaseio.com",
+      projectId: "ekos-62f46",
+      storageBucket: "ekos-62f46.appspot.com",
+      messagingSenderId: "83588029480",
+      appId: "1:83588029480:web:c21d4536c7d6ee69b8691d",
+      measurementId: "G-ZV5S3CK9YJ"
     };
-  }
   
-  // Formu sıfırlama
-  function resetForm() {
-    contactForm.reset();
-    contactForm.classList.remove('was-validated');
-  }
-  
-  // Buton durumunu değiştirme
-  function toggleSubmitButton(isLoading) {
-    submitBtn.disabled = isLoading;
-    submitBtn.innerHTML = isLoading 
-      ? '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Gönderiliyor...'
-      : 'GÖNDER';
-  }
-  
-  // Alert gösterme
-  function showAlert(message, type) {
-    alertDiv.textContent = message;
-    alertDiv.className = `alert alert-${type} mt-3 show`;
+    // Firebase'ı başlat
+    firebase.initializeApp(firebaseConfig);
     
-    // 5 saniye sonra alert'i gizle
-    setTimeout(() => {
-      alertDiv.classList.remove('show');
-      setTimeout(() => alertDiv.className = 'alert mt-3 d-none', 300);
-    }, 5000);
-  }
-</script>
+    // Firestore referansını al
+    const db = firebase.firestore();
+  
+    // Formu al
+    const form = document.getElementById('contactForm');
+    
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      
+      // Formun doğruluğunu kontrol et
+      if (!form.checkValidity()) {
+        e.stopPropagation();
+        form.classList.add('was-validated');
+        return;
+      }
+  
+      // Form verilerini al
+      const name = document.getElementById('name').value;
+      const phone = document.getElementById('phone').value;
+      const email = document.getElementById('email').value;
+      const subject = document.getElementById('subject').value;
+      const message = document.getElementById('message').value;
+      
+      // Firestore'a veri ekle
+      db.collection('ContactForms').add({
+        name: name,
+        phone: phone,
+        email: email,
+        subject: subject,
+        message: message,
+        date: new Date().toLocaleString()
+      })
+      .then(() => {
+        alert('Mesajınız başarıyla gönderildi!');
+        form.reset();
+        form.classList.remove('was-validated');
+      })
+      .catch((error) => {
+        alert('Bir hata oluştu: ' + error.message);
+      });
+    });
+  </script>
+  
   <!-- end contact section -->
-
   <!-- info section -->
   <section class="info_section ">
     <div class="container">
@@ -700,15 +673,6 @@
   </footer>
   <!-- footer section -->
 <!-- index.html içinde -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
-  <script>
-   const firebaseConfig = { /* config bilgileri */ };
-   const app = firebase.initializeApp(firebaseConfig);
-   const db = firebase.firestore();
-</script>
-   <!--firebase -->
-  <script type="module" src="/js/firebase.js"></script>
   <!-- jQery -->
   <script src="js/jquery-3.4.1.min.js"></script>
   <!-- popper js -->
@@ -721,6 +685,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js" integrity="sha256-Zr3vByTlMGQhvMfgkQ5BtWRSKBGa2QlspKYJnkjZTmo=" crossorigin="anonymous"></script>
   <!-- custom js -->
   <script src="js/custom.js"></script>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    
 </body>
 
 </html>
