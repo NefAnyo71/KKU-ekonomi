@@ -5,11 +5,441 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Topluluk Yönetim Paneli</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/admin.css">
     <link rel="icon" type="image/png" href="/images/favicon.png">
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <style>
+        /* LOGIN STYLES */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .login-box {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 420px;
+            transition: all 0.3s ease;
+        }
+
+        .login-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-header .logo {
+            width: 90px;
+            height: 90px;
+            margin-bottom: 1.5rem;
+            border-radius: 50%;
+            border: 3px solid #667eea;
+            padding: 5px;
+        }
+
+        .login-header h3 {
+            color: #333;
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+            outline: none;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.85rem 1.5rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: #667eea;
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background-color: #5a6fd1;
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            color: #e74a3b;
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.95rem;
+            padding: 0.5rem;
+            border-radius: 4px;
+            background-color: rgba(231, 74, 59, 0.1);
+        }
+
+        /* ADMIN PANEL STYLES */
+        #admin-panel {
+            display: none;
+            min-height: 100vh;
+            background-color: #f8fafc;
+            flex-direction: column;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.25rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logout-btn:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .admin-content {
+            display: flex;
+            min-height: calc(100vh - 70px);
+        }
+
+        .admin-navigation {
+            width: 250px;
+            background-color: white;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.85rem 1.5rem;
+            color: #555;
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background-color: #f8fafc;
+            color: #667eea;
+            border-left-color: #667eea;
+        }
+
+        .nav-item i {
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-item.active {
+            background-color: #f0f4ff;
+            color: #667eea;
+            border-left-color: #667eea;
+            font-weight: 600;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            background-color: #f8fafc;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            border-left: 4px solid #667eea;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            color: #555;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .card-icon.news {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+        }
+
+        .card-icon.members {
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+        }
+
+        .card-icon.voting {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            color: #555;
+        }
+
+        .card-icon.applications {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+        }
+
+        .card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+            margin: 0.5rem 0;
+        }
+
+        .card-footer {
+            margin-top: 1rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-link {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .card-link:hover {
+            text-decoration: underline;
+        }
+
+        .card-change {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .positive {
+            color: #28a745;
+        }
+
+        .negative {
+            color: #dc3545;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: #555;
+        }
+
+        tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .status {
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-approved {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-rejected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .btn-sm {
+            padding: 0.35rem 0.75rem;
+            font-size: 0.85rem;
+            border-radius: 4px;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .admin-content {
+                flex-direction: column;
+            }
+            
+            .admin-navigation {
+                width: 100%;
+                display: flex;
+                overflow-x: auto;
+                padding: 0;
+            }
+            
+            .nav-item {
+                padding: 1rem;
+                border-left: none;
+                border-bottom: 3px solid transparent;
+                white-space: nowrap;
+            }
+            
+            .nav-item.active {
+                border-left: none;
+                border-bottom: 3px solid #667eea;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .login-box {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <div id="login-container" class="login-container">
@@ -21,11 +451,11 @@
             <form id="login-form">
                 <div class="form-group">
                     <label for="login-email">Email</label>
-                    <input type="email" id="login-email" required>
+                    <input type="email" id="login-email" required placeholder="admin@ornek.com">
                 </div>
                 <div class="form-group">
                     <label for="login-password">Şifre</label>
-                    <input type="password" id="login-password" required>
+                    <input type="password" id="login-password" required placeholder="••••••••">
                 </div>
                 <button type="submit" class="btn btn-primary">Giriş Yap</button>
                 <div id="login-error" class="error-message"></div>
@@ -33,26 +463,373 @@
         </div>
     </div>
 
-    <div id="admin-panel" style="display: none;">
+    <div id="admin-panel">
         <div class="admin-header">
-            <h2>Yönetim Paneli</h2>
-            <button class="logout-btn">Çıkış Yap</button>
+            <h2>Topluluk Yönetim Paneli</h2>
+            <button class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Çıkış Yap
+            </button>
         </div>
         <div class="admin-content">
-            <div id="dashboard-section">
-                <h3>Gösterge Paneli</h3>
-                <p>Hoş geldiniz yönetici!</p>
-            </div>
             <div class="admin-navigation">
-                <button onclick="showSection('users-section')">Kullanıcılar</button>
-                <button onclick="showSection('settings-section')">Ayarlar</button>
+                <a href="#" class="nav-item active" onclick="showSection('dashboard-section', this)">
+                    <i class="fas fa-tachometer-alt"></i> Gösterge Paneli
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('news-section', this)">
+                    <i class="fas fa-newspaper"></i> Topluluk Haberleri
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('members-section', this)">
+                    <i class="fas fa-users"></i> Üye Kayıtları
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('voting-section', this)">
+                    <i class="fas fa-vote-yea"></i> Oylamalar
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('applications-section', this)">
+                    <i class="fas fa-file-alt"></i> Web Başvuruları
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('settings-section', this)">
+                    <i class="fas fa-cog"></i> Ayarlar
+                </a>
+            </div>
+            <div class="main-content">
+                <!-- Dashboard Section -->
+                <div id="dashboard-section" class="section active">
+                    <h2 class="section-title">Gösterge Paneli</h2>
+                    <p>Hoş geldiniz, yönetici! Topluluğunuzun genel durumunu buradan takip edebilirsiniz.</p>
+                    
+                    <div class="dashboard-cards">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Topluluk Haberleri</h3>
+                                <div class="card-icon news">
+                                    <i class="fas fa-newspaper"></i>
+                                </div>
+                            </div>
+                            <div class="card-value">24</div>
+                            <div class="card-footer">
+                                <a href="#" class="card-link" onclick="showSection('news-section')">Tümünü Görüntüle</a>
+                                <span class="card-change positive">+3 yeni</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Üye Kayıtları</h3>
+                                <div class="card-icon members">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                            </div>
+                            <div class="card-value">156</div>
+                            <div class="card-footer">
+                                <a href="#" class="card-link" onclick="showSection('members-section')">Tümünü Görüntüle</a>
+                                <span class="card-change positive">+8 yeni</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Aktif Oylamalar</h3>
+                                <div class="card-icon voting">
+                                    <i class="fas fa-vote-yea"></i>
+                                </div>
+                            </div>
+                            <div class="card-value">5</div>
+                            <div class="card-footer">
+                                <a href="#" class="card-link" onclick="showSection('voting-section')">Tümünü Görüntüle</a>
+                                <span class="card-change">2 sona eriyor</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Başvurular</h3>
+                                <div class="card-icon applications">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                            </div>
+                            <div class="card-value">12</div>
+                            <div class="card-footer">
+                                <a href="#" class="card-link" onclick="showSection('applications-section')">Tümünü Görüntüle</a>
+                                <span class="card-change negative">3 beklemede</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            <div id="users-section" style="display: none;">
-                <h3>Kullanıcı Yönetimi</h3>
+                
+                <!-- News Section -->
+                <div id="news-section" class="section">
+                    <h2 class="section-title">Topluluk Haberleri</h2>
+                    <p>Topluluk duyurularınızı ve haberlerinizi buradan yönetebilirsiniz.</p>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Başlık</th>
+                                    <th>Yazar</th>
+                                    <th>Tarih</th>
+                                    <th>Durum</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Yeni Etkinlik Duyurusu</td>
+                                    <td>Ahmet Yılmaz</td>
+                                    <td>15.05.2023</td>
+                                    <td><span class="status status-approved">Yayında</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-secondary">Düzenle</button>
+                                        <button class="btn btn-sm btn-danger">Sil</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Topluluk Toplantısı</td>
+                                    <td>Ayşe Demir</td>
+                                    <td>12.05.2023</td>
+                                    <td><span class="status status-approved">Yayında</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-secondary">Düzenle</button>
+                                        <button class="btn btn-sm btn-danger">Sil</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Yeni Üyelik Bilgileri</td>
+                                    <td>Mehmet Kaya</td>
+                                    <td>10.05.2023</td>
+                                    <td><span class="status status-pending">Beklemede</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-secondary">Düzenle</button>
+                                        <button class="btn btn-sm btn-success">Onayla</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem;">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Yeni Haber Ekle
+                        </button>
+                    </div>
                 </div>
-            <div id="settings-section" style="display: none;">
-                <h3>Ayarlar</h3>
+                
+                <!-- Members Section -->
+                <div id="members-section" class="section">
+                    <h2 class="section-title">Üye Kayıtları</h2>
+                    <p>Topluluk üyelerinizin listesini buradan görüntüleyebilir ve yönetebilirsiniz.</p>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Üye No</th>
+                                    <th>Ad Soyad</th>
+                                    <th>E-posta</th>
+                                    <th>Kayıt Tarihi</th>
+                                    <th>Durum</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>#1001</td>
+                                    <td>Ali Veli</td>
+                                    <td>ali.veli@ornek.com</td>
+                                    <td>01.05.2023</td>
+                                    <td><span class="status status-approved">Aktif</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-secondary">Detay</button>
+                                        <button class="btn btn-sm btn-danger">Engelle</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>#1002</td>
+                                    <td>Zeynep Kaya</td>
+                                    <td>zeynep.kaya@ornek.com</td>
+                                    <td>28.04.2023</td>
+                                    <td><span class="status status-approved">Aktif</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-secondary">Detay</button>
+                                        <button class="btn btn-sm btn-danger">Engelle</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>#1003</td>
+                                    <td>Can Demir</td>
+                                    <td>can.demir@ornek.com</td>
+                                    <td>25.04.2023</td>
+                                    <td><span class="status status-pending">Onay Bekliyor</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-secondary">Detay</button>
+                                        <button class="btn btn-sm btn-success">Onayla</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem;">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i> Yeni Üye Ekle
+                        </button>
+                        <button class="btn btn-secondary" style="margin-left: 0.5rem;">
+                            <i class="fas fa-file-export"></i> Dışa Aktar
+                        </button>
+                    </div>
                 </div>
+                
+                <!-- Voting Section -->
+                <div id="voting-section" class="section">
+                    <h2 class="section-title">Oylamalar</h2>
+                    <p>Topluluk oylamalarınızı buradan oluşturabilir ve yönetebilirsiniz.</p>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Oylama Adı</th>
+                                    <th>Başlangıç</th>
+                                    <th>Bitiş</th>
+                                    <th>Katılım</th>
+                                    <th>Durum</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Yeni Yönetim Kurulu Seçimi</td>
+                                    <td>10.05.2023</td>
+                                    <td>20.05.2023</td>
+                                    <td>%45</td>
+                                    <td><span class="status status-approved">Devam Ediyor</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-secondary">Detay</button>
+                                        <button class="btn btn-sm btn-danger">İptal Et</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Etkinlik Önerileri</td>
+                                    <td>01.05.2023</td>
+                                    <td>10.05.2023</td>
+                                    <td>%68</td>
+                                    <td><span class="status status-approved">Devam Ediyor</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-secondary">Detay</button>
+                                        <button class="btn btn-sm btn-danger">İptal Et</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Topluluk Logo Seçimi</td>
+                                    <td>15.04.2023</td>
+                                    <td>25.04.2023</td>
+                                    <td>%72</td>
+                                    <td><span class="status status-rejected">Tamamlandı</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-secondary">Sonuçlar</button>
+                                        <button class="btn btn-sm btn-secondary">Rapor</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem;">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus-circle"></i> Yeni Oylama Oluştur
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Applications Section -->
+                <div id="applications-section" class="section">
+                    <h2 class="section-title">Web Site Başvuruları</h2>
+                    <p>Web sitesi üzerinden gelen başvuruları buradan yönetebilirsiniz.</p>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Başvuru No</th>
+                                    <th>Ad Soyad</th>
+                                    <th>Başvuru Türü</th>
+                                    <th>Tarih</th>
+                                    <th>Durum</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>#2001</td>
+                                    <td>Fatma Yıldız</td>
+                                    <td>Üyelik Başvurusu</td>
+                                    <td>14.05.2023</td>
+                                    <td><span class="status status-pending">Beklemede</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-secondary">İncele</button>
+                                        <button class="btn btn-sm btn-success">Onayla</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>#2002</td>
+                                    <td>Mustafa Şahin</td>
+                                    <td>Etkinlik Önerisi</td>
+                                    <td>12.05.2023</td>
+                                    <td><span class="status status-pending">Beklemede</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-secondary">İncele</button>
+                                        <button class="btn btn-sm btn-success">Onayla</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>#2003</td>
+                                    <td>Elif Korkmaz</td>
+                                    <td>Sponsorluk Talebi</td>
+                                    <td>10.05.2023</td>
+                                    <td><span class="status status-approved">Onaylandı</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-secondary">Detay</button>
+                                        <button class="btn btn-sm btn-danger">Reddet</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem;">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-download"></i> Başvuruları İndir
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Settings Section -->
+                <div id="settings-section" class="section">
+                    <h2 class="section-title">Ayarlar</h2>
+                    <p>Sistem ve topluluk ayarlarınızı buradan yönetebilirsiniz.</p>
+                    
+                    <div class="card" style="max-width: 600px; margin-top: 1.5rem;">
+                        <div class="card-header">
+                            <h3 class="card-title">Genel Ayarlar</h3>
+                        </div>
+                        <div style="padding: 1.5rem;">
+                            <div class="form-group">
+                                <label>Topluluk Adı</label>
+                                <input type="text" value="Teknoloji Topluluğu" style="width: 100%;">
+                            </div>
+                            <div class="form-group">
+                                <label>Topluluk Açıklaması</label>
+                                <textarea style="width: 100%; height: 100px; padding: 0.75rem; border: 2px solid #ddd; border-radius: 6px;">Teknoloji ve yenilikçilik alanında faaliyet gösteren bir öğrenci topluluğuyuz.</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Topluluk Logosu</label>
+                                <input type="file" style="width: 100%;">
+                            </div>
+                            <button class="btn btn-primary">Ayarları Kaydet</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -161,7 +938,7 @@
         })();
 
         // Check if user is admin
-        async function checkAdminStatus(database, uid) { // Daha anlamlı değişken adı
+        async function checkAdminStatus(database, uid) {
             try {
                 const doc = await database.collection('admins').doc(uid).get();
                 return doc.exists;
@@ -191,148 +968,28 @@
         }
 
         // Function to show different admin sections
-        function showSection(sectionId) {
-            const sections = document.querySelectorAll('.admin-content > div');
+        function showSection(sectionId, clickedElement = null) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.section');
             sections.forEach(section => {
-                section.style.display = 'none';
+                section.classList.remove('active');
             });
+            
+            // Show selected section
             const selectedSection = document.getElementById(sectionId);
             if (selectedSection) {
-                selectedSection.style.display = 'block';
+                selectedSection.classList.add('active');
+            }
+            
+            // Update active nav item
+            if (clickedElement) {
+                const navItems = document.querySelectorAll('.nav-item');
+                navItems.forEach(item => {
+                    item.classList.remove('active');
+                });
+                clickedElement.classList.add('active');
             }
         }
     </script>
-
-    <style>
-        /* LOGIN STYLES */
-        .login-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f8f9fc;
-        }
-
-        .login-box {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .login-header {
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .login-header .logo {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 1rem;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 1rem;
-        }
-
-        .error-message {
-            color: #e74a3b;
-            margin-top: 1rem;
-            text-align: center;
-        }
-
-        /* ADMIN PANEL LAYOUT */
-        #admin-panel {
-            display: none; /* Hidden by default */
-            min-height: 100vh;
-            background-color: #f4f6f8;
-            padding: 20px;
-            flex-direction: column;
-        }
-
-        .admin-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .admin-header h2 {
-            margin: 0;
-            font-size: 1.5rem;
-            color: #333;
-        }
-
-        .admin-header .logout-btn {
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-
-        .admin-header .logout-btn:hover {
-            background-color: #c82333;
-        }
-
-        .admin-content {
-            display: flex;
-            gap: 20px;
-        }
-
-        .admin-navigation {
-            min-width: 200px;
-            padding: 15px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-        }
-
-        .admin-navigation button {
-            display: block;
-            width: 100%;
-            padding: 0.75rem;
-            margin-bottom: 10px;
-            border: none;
-            background-color: #007bff;
-            color: white;
-            border-radius: 4px;
-            cursor: pointer;
-            text-align: left;
-            font-size: 1rem;
-        }
-
-        .admin-navigation button:hover {
-            background-color: #0056b3;
-        }
-
-        .admin-content > div {
-            flex-grow: 1;
-            padding: 15px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-        }
-    </style>
 </body>
 </html>
