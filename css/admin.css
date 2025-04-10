@@ -441,3 +441,22 @@ h2 {
     padding-bottom: 0.5em; /* Çizgi ile başlık arasına boşluk */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Yazı tipi değiştirdim */
 }
+
+.logout-btn {
+    background-color: #ffcc00;
+    color: #333;
+    font-size: 1rem;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.logout-btn:hover {
+    background-color: #e6b800;
+}
+
+.logout-btn i {
+    margin-right: 8px;
+}
