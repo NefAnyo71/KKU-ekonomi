@@ -429,3 +429,15 @@ color: #333;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.7);
 }
        
+h2 {
+    font-size: 2em; /* Daha büyük başlık */
+    margin: 0.5em 0; /* Daha kompakt margin */
+    font-weight: 700; /* Daha belirgin yazı tipi */
+    text-align: center; /* Başlık ortalanmış olsun */
+    color: #333; /* Koyu gri yazı rengi */
+    letter-spacing: 1px; /* Harfler arası mesafe ekleyelim */
+    text-transform: uppercase; /* Büyük harf ile yazalım */
+    border-bottom: 2px solid #667eea; /* Başlık altına bir çizgi ekleyelim */
+    padding-bottom: 0.5em; /* Çizgi ile başlık arasına boşluk */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Yazı tipi değiştirdim */
+}
