@@ -7,13 +7,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/admin.css">
     <link rel="icon" type="image/png" href="/images/favicon.png">
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 </head>
 <body>
-    <!-- LOGIN FORM -->
     <div id="login-container" class="login-container">
         <div class="login-box">
             <div class="login-header">
@@ -35,10 +33,27 @@
         </div>
     </div>
 
-    <!-- ADMIN PANEL (hidden by default) -->
     <div id="admin-panel" style="display: none;">
-        <!-- Your existing admin panel content here -->
-        <!-- ... -->
+        <div class="admin-header">
+            <h2>Yönetim Paneli</h2>
+            <button class="logout-btn">Çıkış Yap</button>
+        </div>
+        <div class="admin-content">
+            <div id="dashboard-section">
+                <h3>Gösterge Paneli</h3>
+                <p>Hoş geldiniz yönetici!</p>
+            </div>
+            <div class="admin-navigation">
+                <button onclick="showSection('users-section')">Kullanıcılar</button>
+                <button onclick="showSection('settings-section')">Ayarlar</button>
+                </div>
+            <div id="users-section" style="display: none;">
+                <h3>Kullanıcı Yönetimi</h3>
+                </div>
+            <div id="settings-section" style="display: none;">
+                <h3>Ayarlar</h3>
+                </div>
+        </div>
     </div>
 
     <script>
@@ -47,12 +62,12 @@
             try {
                 const response = await fetch('https://proxyserver-flax.vercel.app/api/config');
                 if (!response.ok) {
-                    throw new Error('Firebase config could not be fetched');
+                    throw new Error('Firebase yapılandırması alınamadı');
                 }
                 const config = await response.json();
                 return config.data || config;
             } catch (error) {
-                console.error('Config fetch error:', error);
+                console.error('Yapılandırma hatası:', error);
                 document.getElementById('login-error').textContent = 'Yapılandırma hatası. Lütfen daha sonra tekrar deneyin.';
                 return null;
             }
@@ -61,7 +76,7 @@
         // Initialize Firebase
         async function initializeFirebase() {
             const firebaseConfig = await fetchFirebaseConfig();
-            
+
             if (!firebaseConfig) {
                 return null;
             }
@@ -71,29 +86,34 @@
                 const app = firebase.initializeApp(firebaseConfig);
                 const auth = firebase.auth();
                 const db = firebase.firestore();
-                
+
                 return { app, auth, db };
             } catch (error) {
-                console.error('Firebase init error:', error);
+                console.error('Firebase başlatma hatası:', error);
                 document.getElementById('login-error').textContent = 'Bağlantı hatası. Lütfen daha sonra tekrar deneyin.';
                 return null;
             }
         }
 
+        let firebaseApp;
+        let auth;
+        let db;
+
         // Main initialization
         (async function() {
-            const firebaseApp = await initializeFirebase();
-            
+            firebaseApp = await initializeFirebase();
+
             if (!firebaseApp) {
                 return;
             }
 
-            const { auth, db } = firebaseApp;
+            auth = firebaseApp.auth;
+            db = firebaseApp.firestore();
 
             // Login form handler
             document.getElementById('login-form').addEventListener('submit', async (e) => {
                 e.preventDefault();
-                
+
                 const email = document.getElementById('login-email').value;
                 const password = document.getElementById('login-password').value;
                 const errorElement = document.getElementById('login-error');
@@ -101,10 +121,10 @@
                 try {
                     const userCredential = await auth.signInWithEmailAndPassword(email, password);
                     const user = userCredential.user;
-                    
+
                     // Check if user is admin
                     const isAdmin = await checkAdminStatus(db, user.uid);
-                    
+
                     if (isAdmin) {
                         // Show admin panel
                         document.getElementById('login-container').style.display = 'none';
@@ -117,7 +137,7 @@
                     }
                 } catch (error) {
                     errorElement.textContent = error.message;
-                    console.error('Login error:', error);
+                    console.error('Giriş hatası:', error);
                 }
             });
 
@@ -131,7 +151,12 @@
                         initializeAdminPanel();
                     } else {
                         await auth.signOut();
+                        document.getElementById('login-container').style.display = 'flex'; // Show login again
+                        document.getElementById('admin-panel').style.display = 'none';
                     }
+                } else {
+                    document.getElementById('login-container').style.display = 'flex'; // Ensure login is visible on logout/initial load
+                    document.getElementById('admin-panel').style.display = 'none';
                 }
             });
         })();
@@ -142,32 +167,40 @@
                 const doc = await db.collection('admins').doc(uid).get();
                 return doc.exists;
             } catch (error) {
-                console.error('Admin check error:', error);
+                console.error('Admin kontrol hatası:', error);
                 return false;
             }
         }
 
         // Initialize admin panel functionality
         function initializeAdminPanel() {
-            // Your existing admin panel JS code here
-            // ...
-            
-            // Example: Add logout functionality
-            document.querySelector('.logout-btn').addEventListener('click', async () => {
-                try {
-                    await firebase.auth().signOut();
-                    document.getElementById('admin-panel').style.display = 'none';
-                    document.getElementById('login-container').style.display = 'flex';
-                    document.getElementById('login-form').reset();
-                } catch (error) {
-                    console.error('Logout error:', error);
-                }
-            });
+            const logoutButton = document.querySelector('#admin-panel .logout-btn');
+            if (logoutButton) {
+                logoutButton.addEventListener('click', async () => {
+                    try {
+                        await firebase.auth().signOut();
+                        document.getElementById('admin-panel').style.display = 'none';
+                        document.getElementById('login-container').style.display = 'flex';
+                        document.getElementById('login-form').reset();
+                    } catch (error) {
+                        console.error('Çıkış hatası:', error);
+                    }
+                });
+            } else {
+                console.error("Çıkış butonu bulunamadı!");
+            }
         }
 
-        // Your existing showSection function
+        // Function to show different admin sections
         function showSection(sectionId) {
-            // ... existing implementation ...
+            const sections = document.querySelectorAll('.admin-content > div');
+            sections.forEach(section => {
+                section.style.display = 'none';
+            });
+            const selectedSection = document.getElementById(sectionId);
+            if (selectedSection) {
+                selectedSection.style.display = 'block';
+            }
         }
     </script>
 
@@ -227,8 +260,79 @@
 
         /* ADMIN PANEL LAYOUT */
         #admin-panel {
-            display: flex;
+            display: none; /* Hidden by default */
             min-height: 100vh;
+            background-color: #f4f6f8;
+            padding: 20px;
+            flex-direction: column;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .admin-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        .admin-header .logout-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .admin-header .logout-btn:hover {
+            background-color: #c82333;
+        }
+
+        .admin-content {
+            display: flex;
+            gap: 20px;
+        }
+
+        .admin-navigation {
+            min-width: 200px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .admin-navigation button {
+            display: block;
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 10px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 1rem;
+        }
+
+        .admin-navigation button:hover {
+            background-color: #0056b3;
+        }
+
+        .admin-content > div {
+            flex-grow: 1;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
         }
     </style>
 </body>
