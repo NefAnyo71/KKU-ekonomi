@@ -95,20 +95,19 @@
             }
         }
 
-        let firebaseApp;
         let auth;
         let db;
 
         // Main initialization
         (async function() {
-            firebaseApp = await initializeFirebase();
+            const firebaseAppResult = await initializeFirebase();
 
-            if (!firebaseApp) {
+            if (!firebaseAppResult) {
                 return;
             }
 
-            auth = firebaseApp.auth;
-            db = firebaseApp.firestore();
+            auth = firebaseAppResult.auth;
+            db = firebaseAppResult.db;
 
             // Login form handler
             document.getElementById('login-form').addEventListener('submit', async (e) => {
@@ -162,9 +161,9 @@
         })();
 
         // Check if user is admin
-        async function checkAdminStatus(db, uid) {
+        async function checkAdminStatus(database, uid) { // Daha anlamlı değişken adı
             try {
-                const doc = await db.collection('admins').doc(uid).get();
+                const doc = await database.collection('admins').doc(uid).get();
                 return doc.exists;
             } catch (error) {
                 console.error('Admin kontrol hatası:', error);
