@@ -10,6 +10,133 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <link rel="stylesheet" href="/css/admin.css">
+    
+        /* Feedback kartları için stil */
+        .feedback-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .feedback-card.unread {
+            border-left-color: #4e73df;
+            background-color: #f8f9fc;
+        }
+
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .feedback-name {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .feedback-subject {
+            font-weight: 500;
+            color: #4e73df;
+            font-size: 0.95rem;
+        }
+
+        .feedback-contact {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .feedback-email, .feedback-phone {
+            color: #5a5c69;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .feedback-date {
+            font-size: 0.85rem;
+            color: #858796;
+            white-space: nowrap;
+            margin-left: 1rem;
+        }
+
+        .feedback-message {
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            white-space: pre-line;
+        }
+
+        .feedback-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #eee;
+            padding-top: 1rem;
+        }
+
+        .feedback-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .status-select {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 0.85rem;
+        }
+
+        /* Durum etiketleri */
+        .feedback-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .status-unread {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-read {
+            background-color: #e2e3e5;
+            color: #383d41;
+        }
+
+        .status-replied {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .feedback-filters {
+            width: 200px;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        /* Navigasyon badge stili */
+        .nav-item .badge {
+            background-color: #e74a3b;
+            color: white;
+            border-radius: 10px;
+            padding: 0.25em 0.6em;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-left: 0.5rem;
+            vertical-align: middle;
+        }
+    
 </head>
 <body>
     <!-- Giriş Ekranı -->
@@ -67,6 +194,10 @@
                 <a href="#" class="nav-item" onclick="showSection('applications-section', this)">
                     <i class="fas fa-file-alt"></i> Web Başvuruları
                 </a>
+                <a href="#" class="nav-item" onclick="showSection('feedback-section', this)">
+                    <i class="fas fa-comment-alt"></i> Geri Bildirimler
+                    <span id="unread-feedback-count" class="badge" style="display: none;"></span>
+                </a>
                 <a href="#" class="nav-item" onclick="showSection('settings-section', this)">
                     <i class="fas fa-cog"></i> Ayarlar
                 </a>
@@ -97,9 +228,28 @@
                         </div>
                     </div>
                 </div>
-                
-                <!-- Other sections remain the same as before -->
-                <!-- ... -->
+
+                <!-- Feedback Section -->
+                <div id="feedback-section" class="section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2 class="section-title">Geri Bildirimler</h2>
+                        <div class="feedback-filters">
+                            <select id="feedback-filter" class="form-control" onchange="filterFeedback()">
+                                <option value="all">Tümü</option>
+                                <option value="unread">Okunmamış</option>
+                                <option value="read">Okundu</option>
+                                <option value="replied">Yanıtlandı</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div id="feedback-list">
+                        <div style="text-align: center; padding: 2rem; color: #64748b;">
+                            <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                            <p>Geri bildirimler yükleniyor...</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -166,6 +316,7 @@
         let auth;
         let db;
         let newsCollection;
+        let feedbackCollection;
         let currentNewsIdToDelete = null;
 
         // Main initialization
@@ -200,6 +351,7 @@
                     auth = firebase.auth();
                     db = firebase.firestore();
                     newsCollection = db.collection('toplulukhaberleri2');
+                    feedbackCollection = db.collection('feedback');
 
                     return { app, auth, db };
                 } catch (error) {
@@ -218,6 +370,7 @@
             auth = firebaseAppResult.auth;
             db = firebaseAppResult.db;
             newsCollection = db.collection('toplulukhaberleri2');
+            feedbackCollection = db.collection('feedback');
 
             // Login form handler
             document.getElementById('login-form').addEventListener('submit', async (e) => {
@@ -245,6 +398,8 @@
                         document.getElementById('admin-panel').style.display = 'flex';
                         // Load news data
                         loadNewsData();
+                        // Update unread feedback count
+                        updateUnreadFeedbackCount();
                     } else {
                         await auth.signOut();
                         throw new Error('Bu sayfaya erişim yetkiniz yok');
@@ -267,6 +422,9 @@
                         document.getElementById('admin-panel').style.display = 'flex';
                         initializeAdminPanel();
                         loadNewsData();
+                        updateUnreadFeedbackCount();
+                        // Her 30 saniyede bir okunmamış bildirim sayısını güncelle
+                        setInterval(updateUnreadFeedbackCount, 30000);
                     } else {
                         await auth.signOut();
                         document.getElementById('login-container').style.display = 'flex';
@@ -321,6 +479,11 @@
                 // If news section is shown, refresh the news list
                 if (sectionId === 'news-section') {
                     loadNewsData();
+                }
+                // If feedback section is shown, refresh the feedback list
+                else if (sectionId === 'feedback-section') {
+                    loadFeedbackData();
+                    markFeedbackAsRead();
                 }
             }
             
@@ -384,6 +547,189 @@
                 newsList.innerHTML = '<div style="text-align: center; padding: 2rem; color: #e74a3b;">' +
                                    '<i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 1rem;"></i>' +
                                    '<p>Haberler yüklenirken bir hata oluştu. Lütfen tekrar deneyin.</p></div>';
+            }
+        }
+
+        // Load feedback data from Firestore
+        async function loadFeedbackData(filter = 'all') {
+            const feedbackList = document.getElementById('feedback-list');
+            feedbackList.innerHTML = '<div style="text-align: center; padding: 2rem; color: #64748b;">' +
+                                    '<i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 1rem;"></i>' +
+                                    '<p>Geri bildirimler yükleniyor...</p></div>';
+
+            try {
+                let query = feedbackCollection.orderBy('timestamp', 'desc');
+                
+                // Filtreleme
+                if (filter !== 'all') {
+                    query = query.where('status', '==', filter);
+                }
+
+                const snapshot = await query.get();
+                
+                if (snapshot.empty) {
+                    feedbackList.innerHTML = '<div style="text-align: center; padding: 2rem; color: #64748b;">' +
+                                           '<i class="fas fa-comment-alt" style="font-size: 2rem; margin-bottom: 1rem;"></i>' +
+                                           '<p>Henüz geri bildirim bulunmamaktadır.</p></div>';
+                    return;
+                }
+
+                let html = '';
+                snapshot.forEach(doc => {
+                    const feedback = doc.data();
+                    const feedbackId = doc.id;
+                    const date = feedback.timestamp ? new Date(feedback.timestamp.seconds * 1000).toLocaleString('tr-TR') : 'Belirtilmemiş';
+                    const statusClass = getStatusClass(feedback.status || 'unread');
+                    
+                    html += `
+                        <div class="feedback-card ${feedback.status === 'unread' ? 'unread' : ''}" id="feedback-${feedbackId}">
+                            <div class="feedback-header">
+                                <div>
+                                    <span class="feedback-name">${feedback.name || 'İsimsiz'}</span>
+                                    <span class="feedback-subject">${feedback.subject || 'Konu yok'}</span>
+                                </div>
+                                <span class="feedback-date">${date}</span>
+                            </div>
+                            <div class="feedback-contact">
+                                <span class="feedback-email"><i class="fas fa-envelope"></i> ${feedback.email || 'E-posta yok'}</span>
+                                ${feedback.phone ? `<span class="feedback-phone"><i class="fas fa-phone"></i> ${feedback.phone}</span>` : ''}
+                            </div>
+                            <div class="feedback-content">
+                                <p class="feedback-message">${feedback.message || 'Mesaj yok'}</p>
+                            </div>
+                            <div class="feedback-footer">
+                                <span class="feedback-status ${statusClass}">${getStatusText(feedback.status || 'unread')}</span>
+                                <div class="feedback-actions">
+                                    <select class="form-control-sm status-select" onchange="updateFeedbackStatus('${feedbackId}', this.value)">
+                                        <option value="unread" ${feedback.status === 'unread' ? 'selected' : ''}>Okunmamış</option>
+                                        <option value="read" ${feedback.status === 'read' ? 'selected' : ''}>Okundu</option>
+                                        <option value="replied" ${feedback.status === 'replied' ? 'selected' : ''}>Yanıtlandı</option>
+                                    </select>
+                                    <a href="mailto:${feedback.email}" class="btn btn-sm btn-primary" ${!feedback.email ? 'disabled' : ''}>
+                                        <i class="fas fa-reply"></i> Yanıtla
+                                    </a>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteFeedback('${feedbackId}')">
+                                        <i class="fas fa-trash-alt"></i> Sil
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                feedbackList.innerHTML = html;
+            } catch (error) {
+                console.error('Geri bildirim yükleme hatası:', error);
+                feedbackList.innerHTML = '<div style="text-align: center; padding: 2rem; color: #e74a3b;">' +
+                                       '<i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 1rem;"></i>' +
+                                       '<p>Geri bildirimler yüklenirken bir hata oluştu. Lütfen tekrar deneyin.</p></div>';
+            }
+        }
+
+        // Yardımcı fonksiyonlar
+        function getStatusClass(status) {
+            switch(status) {
+                case 'unread': return 'status-unread';
+                case 'read': return 'status-read';
+                case 'replied': return 'status-replied';
+                default: return 'status-unread';
+            }
+        }
+
+        function getStatusText(status) {
+            switch(status) {
+                case 'unread': return 'Okunmamış';
+                case 'read': return 'Okundu';
+                case 'replied': return 'Yanıtlandı';
+                default: return 'Okunmamış';
+            }
+        }
+
+        // Feedback durumunu güncelleme
+        async function updateFeedbackStatus(feedbackId, newStatus) {
+            try {
+                await feedbackCollection.doc(feedbackId).update({
+                    status: newStatus,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                // Görsel güncellemeler
+                const feedbackElement = document.getElementById(`feedback-${feedbackId}`);
+                if (feedbackElement) {
+                    feedbackElement.classList.remove('unread');
+                    if (newStatus === 'unread') {
+                        feedbackElement.classList.add('unread');
+                    }
+                    
+                    const statusElement = feedbackElement.querySelector('.feedback-status');
+                    statusElement.textContent = getStatusText(newStatus);
+                    statusElement.className = `feedback-status ${getStatusClass(newStatus)}`;
+                }
+
+                // Okunmamış sayısını güncelle
+                updateUnreadFeedbackCount();
+            } catch (error) {
+                console.error('Durum güncelleme hatası:', error);
+                alert('Durum güncellenirken bir hata oluştu: ' + error.message);
+            }
+        }
+
+        // Feedback filtreleme
+        function filterFeedback() {
+            const filterValue = document.getElementById('feedback-filter').value;
+            loadFeedbackData(filterValue);
+        }
+
+        // Feedback silme
+        async function deleteFeedback(feedbackId) {
+            if (confirm('Bu geri bildirimi silmek istediğinize emin misiniz?')) {
+                try {
+                    await feedbackCollection.doc(feedbackId).delete();
+                    document.getElementById(`feedback-${feedbackId}`).remove();
+                    // Okunmamış sayısını güncelle
+                    updateUnreadFeedbackCount();
+                } catch (error) {
+                    console.error('Geri bildirim silme hatası:', error);
+                    alert('Geri bildirim silinirken bir hata oluştu: ' + error.message);
+                }
+            }
+        }
+
+        // Okunmamış geri bildirim sayısını güncelle
+        async function updateUnreadFeedbackCount() {
+            try {
+                const snapshot = await feedbackCollection.where('status', '==', 'unread').get();
+                const count = snapshot.size;
+                const badge = document.getElementById('unread-feedback-count');
+                
+                if (count > 0) {
+                    badge.textContent = count;
+                    badge.style.display = 'inline-block';
+                } else {
+                    badge.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Okunmamış bildirim sayısı alınırken hata:', error);
+            }
+        }
+
+        // Geri bildirimleri okundu olarak işaretle
+        async function markFeedbackAsRead() {
+            try {
+                const snapshot = await feedbackCollection.where('status', '==', 'unread').get();
+                const batch = db.batch();
+                
+                snapshot.forEach(doc => {
+                    batch.update(doc.ref, {
+                        status: 'read',
+                        readAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                });
+                
+                await batch.commit();
+                updateUnreadFeedbackCount(); // Sayacı güncelle
+            } catch (error) {
+                console.error('Okundu olarak işaretleme hatası:', error);
             }
         }
 
