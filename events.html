@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <!-- Head kısmı index.html ile aynı olmalı -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etkinlikler | KKU Ekonomi Topluluğu</title>
+    <!-- CSS Linkleri (index.html ile aynı) -->
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/events.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <!-- Header Section (index.html ile aynı) -->
+    <header class="header_section">
+        <!-- Navbar kodu buraya gelecek -->
+        <a href="index.html" class="back-button">← Geri Dön</a>
+
+    </header>
+
+    <!-- Etkinlikler Sayfası İçerik -->
+    <section class="events_page layout_padding">
+        <div class="container">
+            <div class="heading_container heading_center">
+                <h2>Etkinlik Takvimimiz</h2>
+                <p class="col-lg-8 px-0">
+                    Ekonomi Topluluğu olarak düzenlediğimiz tüm etkinlikler ve detayları
+                </p>
+            </div>
+
+            <!-- Filtreleme Bölümü -->
+            <div class="row filter-section mb-4">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="categoryFilter">Kategori Seçin:</label>
+                        <select id="categoryFilter" class="form-control">
+                            <option value="all">Tüm Etkinlikler</option>
+                            <option value="seminer">Seminerler</option>
+                            <option value="gezi">Gezi Etkinlikleri</option>
+                            <option value="sosyal">Sosyal Etkinlikler</option>
+                            <option value="workshop">Workshoplar</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="dateFilter">Tarihe Göre Filtrele:</label>
+                        <input type="month" id="dateFilter" class="form-control">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Etkinlik Listesi -->
+            <div class="event-list">
+                <!-- 1. Etkinlik -->
+                <div class="event-card" data-category="sosyal" data-date="2024-03">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="event-img">
+                                <img src="images/iftar.png" alt="İftar Etkinliği" class="img-fluid">
+                                <div class="date-badge">
+                                    <span class="day">15</span>
+                                    <span class="month">Mart</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="event-details">
+                                <h3>İftar Etkinliği</h3>
+                                <div class="meta">
+                                    <span><i class="fa fa-calendar"></i> 15 Mart 2024, 18:30</span>
+                                    <span><i class="fa fa-map-marker"></i> KKU Merkez Kampüs, Açık Alan</span>
+                                    <span><i class="fa fa-users"></i> Katılım: 120 kişi</span>
+                                </div>
+                                <p>Ramazan ayının bereketini birlikte yaşamak için geleneksel iftar etkinliğimizde buluşuyoruz. Tüm üyelerimiz davetlidir.</p>
+                                <div class="event-actions">
+                                    <a href="#" class="btn btn-primary">Detaylar</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Etkinlik -->
+                <div class="event-card" data-category="seminer" data-date="2024-04">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="event-img">
+                                <img src="images/ai.png" alt="Yapay Zeka Semineri" class="img-fluid">
+                                <div class="date-badge">
+                                    <span class="day">10</span>
+                                    <span class="month">Nisan</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="event-details">
+                                <h3>Yapay Zeka İşsizliğe Neden Olur mu?</h3>
+                                <div class="meta">
+                                    <span><i class="fa fa-calendar"></i> 10 Nisan 2024, 14:00</span>
+                                    <span><i class="fa fa-map-marker"></i> KKU İİBF Konferans Salonu</span>
+                                    <span><i class="fa fa-users"></i> Katılım: 80 kişi</span>
+                                </div>
+                                <p>Teknoloji uzmanı Dr. Ahmet Yılmaz ile yapay zekanın iş dünyasına etkilerini ve gelecekteki istihdam senaryolarını konuşacağız.</p>
+                                <div class="event-actions">
+                                    <a href="#" class="btn btn-primary">Detaylar</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Etkinlik -->
+                <div class="event-card" data-category="gezi" data-date="2024-04">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="event-img">
+                                <img src="images/isbankası.jpg" alt="İş Bankası Gezisi" class="img-fluid">
+                                <div class="date-badge">
+                                    <span class="day">25</span>
+                                    <span class="month">Nisan</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="event-details">
+                                <h3>Ankara - İş Bankası Müzesi Gezisi</h3>
+                                <div class="meta">
+                                    <span><i class="fa fa-calendar"></i> 25 Nisan 2024, 08:00-18:00</span>
+                                    <span><i class="fa fa-map-marker"></i> Ankara İş Bankası Müzesi</span>
+                                    <span><i class="fa fa-users"></i> Katılım: 40 kişi (Sınırlı)</span>
+                                </div>
+                                <p>Türkiye'nin finans tarihine yolculuk yapacağımız bu gezide İş Bankası'nın kuruluşundan günümüze uzanan serüvenini öğreneceğiz.</p>
+                                <div class="event-actions">
+                                    <a href="#" class="btn btn-primary">Detaylar</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sayfalama -->
+            <div class="pagination-container">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1">Önceki</a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">Sonraki</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section (index.html ile aynı) -->
+    <footer class="footer_section">
+        <!-- Footer kodu buraya gelecek -->
+    </footer>
+
+    <!-- JavaScript Dosyaları -->
+    <script src="js/jquery-3.4.1.min.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script>
+        // Filtreleme Fonksiyonu
+        $(document).ready(function(){
+            $('#categoryFilter, #dateFilter').change(function(){
+                const category = $('#categoryFilter').val();
+                const date = $('#dateFilter').val();
+                
+                $('.event-card').each(function(){
+                    const cardCategory = $(this).data('category');
+                    const cardDate = $(this).data('date');
+                    
+                    const categoryMatch = (category === 'all') || (category === cardCategory);
+                    const dateMatch = (date === '') || (cardDate === date.substr(0, 7));
+                    
+                    if(categoryMatch && dateMatch) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
