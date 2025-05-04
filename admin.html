@@ -84,21 +84,14 @@
                     </div>
                 </div>
                 
-                <!-- News Section düzenleme yapıldı  -->
-<div id="news-section" class="section">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-        <h2 class="section-title">Topluluk Haberleri</h2>
-        <div style="display: flex; gap: 0.5rem;">
-            <button class="btn btn-primary" onclick="openAddNewsModal()">
-                <i class="fas fa-plus"></i> Yeni Haber Ekle
-            </button>
-            <button class="btn btn-secondary" onclick="editNews('test-id')">
-                <i class="fas fa-edit"></i> Haber Düzenle (Test)
-            </button>
-        </div>
-    </div>
-</div>
-
+                <!-- News Section -->
+                <div id="news-section" class="section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2 class="section-title">Topluluk Haberleri</h2>
+                        <button class="btn btn-primary" onclick="openAddNewsModal()">
+                            <i class="fas fa-plus"></i> Yeni Haber Ekle
+                        </button>
+                    </div>
                     
                     <div id="news-list">
                         <!-- News items will be loaded here dynamically -->
@@ -409,10 +402,6 @@
                                 <p class="news-details">${news.details || 'Detay bilgisi yok.'}</p>
                                 ${news.url ? `<a href="${news.url}" target="_blank" class="news-url">${news.url}</a>` : ''}
                             </div>
-                            <div class="news-actions">
-                                <button class="btn btn-sm btn-edit" onclick="editNews('${newsId}')">
-                                    <i class="fas fa-edit"></i> Düzenle
-                                </button>
                                 <button class="btn btn-sm btn-danger" onclick="showDeleteModal('${newsId}')">
                                     <i class="fas fa-trash-alt"></i> Sil
                                 </button>
