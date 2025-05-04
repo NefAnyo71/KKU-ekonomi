@@ -84,14 +84,21 @@
                     </div>
                 </div>
                 
-                <!-- News Section -->
-                <div id="news-section" class="section">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                        <h2 class="section-title">Topluluk Haberleri</h2>
-                        <button class="btn btn-primary" onclick="openAddNewsModal()">
-                            <i class="fas fa-plus"></i> Yeni Haber Ekle
-                        </button>
-                    </div>
+                <!-- News Section düzenleme yapıldı  -->
+<div id="news-section" class="section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 class="section-title">Topluluk Haberleri</h2>
+        <div style="display: flex; gap: 0.5rem;">
+            <button class="btn btn-primary" onclick="openAddNewsModal()">
+                <i class="fas fa-plus"></i> Yeni Haber Ekle
+            </button>
+            <button class="btn btn-secondary" onclick="editNews('test-id')">
+                <i class="fas fa-edit"></i> Haber Düzenle (Test)
+            </button>
+        </div>
+    </div>
+</div>
+
                     
                     <div id="news-list">
                         <!-- News items will be loaded here dynamically -->
@@ -656,12 +663,8 @@
         }
 
         function editNews(newsId) {
-            // You can implement edit functionality similar to add
+
             alert('Düzenleme işlemi için: ' + newsId);
-            // In a complete implementation, you would:
-            // 1. Fetch the news document
-            // 2. Populate the modal with existing data
-            // 3. Update the document instead of creating a new one
         }
 
         function showDeleteModal(newsId) {
