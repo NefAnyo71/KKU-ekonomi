@@ -1050,3 +1050,63 @@ a:focus {
 .footer_section p a {
   color: inherit;
 }
+
+/* bu kısım etkinliklerimiz için ayarladım unutma */
+.activities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.activity-card {
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.activity-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+
+.activity-card h5 {
+  font-size: 1.3rem;
+  color: #222;
+  margin-bottom: 10px;
+}
+
+.activity-card p {
+  font-size: 1rem;
+  color: #555;
+}
+
+.activity-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.btn-box {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.btn-box .btn {
+  padding: 12px 30px;
+  background-color: #007bff;
+  color: white;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.btn-box .btn:hover {
+  background-color: #0056b3;
+}
