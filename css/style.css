@@ -1066,14 +1066,33 @@ a:focus {
   padding: 20px;
   text-align: center;
   transition: transform 0.3s, box-shadow 0.3s;
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Kartların yüksekliklerini eşitler */
 }
 
-.activity-card img {
-  width: 100%;
+.activity-card .img-container {
   height: 200px;
-  object-fit: cover;
+  overflow: hidden;
   border-radius: 12px;
   margin-bottom: 15px;
+}
+
+.activity-card .img-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.activity-card:hover .img-container img {
+  transform: scale(1.05);
+}
+
+.activity-card .content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .activity-card h5 {
@@ -1085,6 +1104,12 @@ a:focus {
 .activity-card p {
   font-size: 1rem;
   color: #555;
+  margin-bottom: 15px;
+  flex-grow: 1;
+}
+
+.activity-card .btn-box {
+  margin-top: auto; /* Butonu en alta yerleştirir */
 }
 
 .activity-card:hover {
@@ -1105,8 +1130,32 @@ a:focus {
   border-radius: 8px;
   text-decoration: none;
   transition: background-color 0.3s;
+  display: inline-block;
 }
 
 .btn-box .btn:hover {
   background-color: #0056b3;
 }
+
+/* Responsive ayarlar */
+@media (max-width: 768px) {
+  .activities-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  
+  .activity-card .img-container {
+    height: 180px;
+  }
+}
+
+@media (max-width: 576px) {
+  .activities-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .activity-card .img-container {
+    height: 160px;
+  }
+}
+/* bu kısım etkinliklerimiz için ayarladım unutma */
