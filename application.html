@@ -224,7 +224,7 @@
                     <i class="fas fa-exclamation-circle"></i> Bir hata oluştu. Lütfen bilgilerinizi kontrol edip tekrar deneyin.
                 </div>
                 
-                <form id="geziForm">
+                <form id="geziform">
                     <div class="form-group">
                         <label for="ad" class="required-field">Adınız</label>
                         <div class="input-icon">
@@ -350,7 +350,7 @@
                 const db = getFirestore(app);
 
                 // Form gönderimini ayarla
-                document.getElementById('geziForm').addEventListener('submit', async function(e) {
+                document.getElementById('geziform').addEventListener('submit', async function(e) {
                     e.preventDefault();
                     
                     // Mesajları gizle
