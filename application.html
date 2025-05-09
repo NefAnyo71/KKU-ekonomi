@@ -27,7 +27,8 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7ff;
+            background: linear-gradient(135deg, #4A90E2, #FFA500, #FFD700, #FF0000);
+            background-size: 400% 400%;
             color: var(--dark);
             line-height: 1.6;
             padding: 20px;
@@ -206,6 +207,41 @@
                 padding: 20px;
             }
         }
+/* Anasayfaya dön butonu burası */
+.back-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #444;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+    font-size: 1rem;
+    white-space: nowrap;
+}
+
+/* Hover efekti */
+.back-button:hover {
+    background-color: #666;
+}
+
+/* Buton ve yazının yer aldığı konteyner */
+.back-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap; /* Mobilde alt alta geçmesini sağlar */
+}
+
+/* Açıklama paragrafı */
+.back-section p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #000000;
+    max-width: 100%;
+}
+/*anasayfaya dön kısmı*/
     </style>
 </head>
 
@@ -277,10 +313,20 @@
                     </button>
                 </form>
                 
-                <p class="disclaimer">
-                    Kişisel verileriniz 6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında işlenecektir. 
-                    Başvurunuz alındıktan sonra tarafınıza dönüş yapılacaktır.
-                </p>
+            <p class="disclaimer">
+              Kişisel verileriniz 6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında işlenecektir. 
+              Başvurunuz alındıktan sonra tarafınıza dönüş yapılacaktır.
+            </p>
+
+            <div class="back-section" style="display: flex; align-items: center; gap: 10px; margin-top: 20px;">
+            <a href="index.html" class="back-button">Anasayfaya Dön</a>
+            <p style="margin: 0;">
+              Web sitemiz ve düzenlediğimiz diğer etkinlikler hakkında daha fazla bilgi almak isterseniz, 
+              <strong>“Anasayfaya Dön”</strong> butonunu kullanarak ana sayfamızı ziyaret edebilirsiniz.
+         </p>
+    </div>
+
+
             </div>
         </div>
     </div>
@@ -371,7 +417,7 @@
         initializeFirebase();
       </script>
       <footer>
-        © <span id="displayYear"></span>
+
       </footer>
 </body>
 </html>
