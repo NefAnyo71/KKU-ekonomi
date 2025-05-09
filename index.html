@@ -636,7 +636,7 @@ async function fetchFirebaseConfig() {
     return config.data;
 
   } catch (error) {
-    console.error('Yapılandırma alma hatası:', error);
+    console.error('Yapılandırma alma hatası Sorun yaşadığınızdan dolayı özür dileriz.:', error);
 
     const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
@@ -645,10 +645,10 @@ async function fetchFirebaseConfig() {
       if (isIOS && isSafari) {
         alert('iPhone Safari tarayıcısında ağ hatası oluştu. Bu, CORS engeli, HTTPS problemi ya da Apple’ın gizlilik özelliklerinden kaynaklanabilir.Lütfen yönetim ekibimizle görüşün ve hata kodunu bildirin.Sorun yaşadığınızdan dolayı özür dileriz.');
       } else {
-        alert('Ağ bağlantısı hatası oluştu. İnternet bağlantınızı veya sunucu durumunu kontrol edin.');
+        alert('Ağ bağlantısı hatası oluştu. İnternet bağlantınızı veya sunucu durumunu kontrol edin.Sorun yaşadığınızdan dolayı özür dileriz.');
       }
     } else {
-      alert('Yapılandırma hatası oluştu: ' + error.message);
+      alert('Yapılandırma hatası oluştu Sorun yaşadığınızdan dolayı özür dileriz.: ' + error.message);
     }
 
     return null;
