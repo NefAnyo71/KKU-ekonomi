@@ -629,8 +629,6 @@ async function fetchFirebaseConfig() {
       } else {
         alert(`Sunucu hatası oluştu (Durum kodu: ${response.status}).`);
       }
-
-      // Hata fırlatmak yerine null döndür, çünkü zaten kullanıcıya uyarı verildi
       return null;
     }
 
@@ -640,8 +638,15 @@ async function fetchFirebaseConfig() {
   } catch (error) {
     console.error('Yapılandırma alma hatası:', error);
 
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
     if (error.name === 'TypeError') {
-      alert('Ağ bağlantısı hatası oluştu. İnternet bağlantınızı kontrol edin veya sunucu çalışıyor mu kontrol edin.');
+      if (isIOS && isSafari) {
+        alert('iPhone Safari tarayıcısında ağ hatası oluştu. Bu, CORS engeli, HTTPS problemi ya da Apple’ın gizlilik özelliklerinden kaynaklanabilir.');
+      } else {
+        alert('Ağ bağlantısı hatası oluştu. İnternet bağlantınızı veya sunucu durumunu kontrol edin.');
+      }
     } else {
       alert('Yapılandırma hatası oluştu: ' + error.message);
     }
