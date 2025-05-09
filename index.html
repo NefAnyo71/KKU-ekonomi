@@ -613,20 +613,42 @@
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
 
 <script type="module">
-  async function fetchFirebaseConfig() {
-    try {
-      const response = await fetch('https://proxyserver-flax.vercel.app/api/config');  
-      if (!response.ok) {
-        throw new Error('Firebase projen patladı uğraşıp durucan.');
+async function fetchFirebaseConfig() {
+  try {
+    const response = await fetch('https://proxyserver-flax.vercel.app/api/config');
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        alert('Yapılandırma dosyası bulunamadı (404). Sunucu adresini veya API yolunu kontrol edin.');
+      } else if (response.status === 500) {
+        alert('Sunucuda bir hata oluştu (500). Lütfen daha sonra tekrar deneyin.');
+      } else if (response.status === 403) {
+        alert('Erişim reddedildi (403). API anahtarı veya izinleri kontrol edin.');
+      } else if (response.status === 401) {
+        alert('Yetkisiz erişim (401). Kimlik doğrulama gerekli olabilir.');
+      } else {
+        alert(`Sunucu hatası oluştu (Durum kodu: ${response.status}).`);
       }
-      const config = await response.json();
-      return config.data;  
-    } catch (error) {
-      console.error('Hata:', error);
-      alert('Yapılandırma hatası oluştu.');
+
+      // Hata fırlatmak yerine null döndür, çünkü zaten kullanıcıya uyarı verildi
       return null;
     }
+
+    const config = await response.json();
+    return config.data;
+
+  } catch (error) {
+    console.error('Yapılandırma alma hatası:', error);
+
+    if (error.name === 'TypeError') {
+      alert('Ağ bağlantısı hatası oluştu. İnternet bağlantınızı kontrol edin veya sunucu çalışıyor mu kontrol edin.');
+    } else {
+      alert('Yapılandırma hatası oluştu: ' + error.message);
+    }
+
+    return null;
   }
+}
 
   // Firebase'i başlat
   async function initializeFirebase() {
