@@ -633,6 +633,19 @@
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
 
+<!-- Bildirim Kutusu HTML -->
+<div id="popup" class="popup-overlay">
+  <div class="popup-content">
+    <h2>📣 Yeni İstanbul Gezimiz!</h2>
+    <p>Başvurular başladı. Katılmak için lütfen <strong>"Gezi Başvurusu"</strong> butonuna basınız.</p>
+    
+    <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
+      <button onclick="closePopup()">Kapat</button>
+      <a href="application.html" class="nav-link">Gezi Başvurusu</a>
+    </div>
+  </div>
+</div>
+
 <script type="module">
 async function fetchFirebaseConfig() {
   try {
@@ -754,6 +767,16 @@ async function fetchFirebaseConfig() {
     });
   });
 </script>
+
+<script>
+  window.onload = function () {
+     document.getElementById("popup").style.display = "flex";
+  };
+
+   function closePopup() {
+    document.getElementById("popup").style.display = "none";
+   }
+ </script>
 
 </body>
 </html>
