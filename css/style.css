@@ -1160,3 +1160,67 @@ a:focus {
 }
 /* bu kısım etkinliklerimiz için ayarladım unutma */
 
+/* CSS - Telefon Uygulaması Tanıtımı */
+.app-promo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  background: rgba(20, 20, 40, 0.9);
+  padding: 50px 20px;
+  border-radius: 20px;
+  margin: 40px auto;
+  max-width: 1000px;
+  color: #f5f5f5;
+}
+
+.app-content {
+  flex: 1 1 300px;
+  padding: 20px;
+}
+
+.app-content h2 {
+  font-size: 2rem;
+  color: #ffcc00;
+}
+
+.app-content p {
+  font-size: 1.1rem;
+  margin-top: 10px;
+}
+
+.app-buttons {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.download-button {
+  background-color: #444;
+  color: #ffcc00;
+  padding: 12px 20px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.3s;
+  text-align: center;
+}
+
+.download-button:hover {
+  background: linear-gradient(135deg, #555, #666);
+}
+
+.app-image {
+  flex: 1 1 300px;
+  padding: 20px;
+  text-align: center;
+}
+
+.app-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+/* CSS - Telefon Uygulaması Tanıtımı */
