@@ -233,6 +233,12 @@
        <p>Tarih: 15/0/5/2025 Saat: 11:45 Yer: İİBF 212'nolu amfi münazaramıza </p>    
        <p>Münazaramıza tüm arkadaşlarımız davetlidir</p>  
     </div>
+    <div class="activity-card">
+       <img src="images/gezi.jpg" alt="İftar Etkinliği">
+      <h5>İstanbul Gezisi Etkinliği</h5>
+       <p>Ekonomi Topluluğu olarak 21 Mayıs Çarşamba günü İstanbul’a günübirlik bir gezi düzenliyoruz.İstanbul turuna katılmak isteyen herkesi davet ediyoruz .</p>
+     </div>
+
     <div class="btn-box">
       <a href="events.html" class="btn btn-primary">Tüm Etkinlikler</a>
     </div>
@@ -655,7 +661,7 @@ async function fetchFirebaseConfig() {
   }
 }
 
-  // Firebase'i başlat
+
   async function initializeFirebase() {
     const firebaseConfig = await fetchFirebaseConfig();
 
@@ -667,17 +673,17 @@ async function fetchFirebaseConfig() {
       const { initializeApp } = await import('https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js');
       const { getFirestore, collection, addDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js');
 
-      // Firebase'i başlat
+
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
 
-      // İletişim Formu Gönderimi
+
       document.getElementById('feedback').addEventListener('submit', async function(e) {
         e.preventDefault();
 
         const form = this;
 
-        // Formun geçerliliğini kontrol et
+
         if (!form.checkValidity()) {
           e.stopPropagation();
           form.classList.add('was-validated');
@@ -691,7 +697,6 @@ async function fetchFirebaseConfig() {
         const message = document.getElementById('message').value;
 
         try {
-          // Firestore'a veri ekle
           await addDoc(collection(db, "feedback"), {
             name: name,
             email: email,
