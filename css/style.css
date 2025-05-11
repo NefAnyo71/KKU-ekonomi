@@ -1266,24 +1266,3 @@ a:focus {
   background-color: #e6b800;
 }
 /* Bildirim Kutusu CSS */
-
-/*popup-butonu başvuruyu açan butonun tasarımı */
-.popup-button2 {
-  background-color: #ffcc00; /* Sarı zemin */
-  color: #111; /* Siyah yazı */
-  padding: 10px 20px;
-  border: none;
-  border-radius: 10px;
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  text-decoration: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.popup-button2:hover {
-  background-color: #e6b800; /* Hafif koyu sarı */
-  transform: scale(1.05); /* Hafif büyüme efekti */
-}
-/*popup-butonu başvuruyu açan butonun tasarımı */
