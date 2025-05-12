@@ -757,7 +757,7 @@ async function fetchFirebaseConfig() {
     $(".service_owl-carousel").owlCarousel({
       loop: true,
       margin: 20,
-      nav: false, // Butonlar kaldırıldı
+      nav: false, 
       dots: true,
       responsive: {
         0: { items: 1 },
@@ -778,5 +778,110 @@ async function fetchFirebaseConfig() {
    }
  </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const animationConfig = {
+    elements: {
+      sections: 'section:not(.no-animate)',
+      cards: '.activity-card, .team-card',
+      specials: '.app-promo, .hero-section'
+    },
+    defaults: {
+      threshold: 0.15,
+      rootMargin: '0px 0px -50px 0px',
+      enterAnimation: {
+        opacity: 0,
+        transform: 'translateY(30px) scale(0.98)',
+        transition: 'all 0.7s cubic-bezier(0.215, 0.61, 0.355, 1)'
+      },
+      exitAnimation: {
+        opacity: 0,
+        transform: 'translateY(20px) scale(0.98)'
+      }
+    },
+    presets: {
+      'fade-up': {
+        enter: { transform: 'translateY(30px)', opacity: 0 },
+        exit: { transform: 'translateY(20px)', opacity: 0 }
+      },
+      'fade-left': {
+        enter: { transform: 'translateX(-30px)', opacity: 0 },
+        exit: { transform: 'translateX(-20px)', opacity: 0 }
+      },
+      'fade-right': {
+        enter: { transform: 'translateX(30px)', opacity: 0 },
+        exit: { transform: 'translateX(20px)', opacity: 0 }
+      },
+      'zoom-in': {
+        enter: { transform: 'scale(0.95)', opacity: 0 },
+        exit: { transform: 'scale(0.95)', opacity: 0 }
+      }
+    }
+  };
+
+  const animatedElements = [
+    ...document.querySelectorAll(animationConfig.elements.sections),
+    ...document.querySelectorAll(animationConfig.elements.cards),
+    ...document.querySelectorAll(animationConfig.elements.specials)
+  ];
+
+  const observerOptions = {
+    threshold: animationConfig.defaults.threshold,
+    rootMargin: animationConfig.defaults.rootMargin
+  };
+
+  animatedElements.forEach(element => {
+    const preset = element.dataset.animate || 'fade-up';
+    const delay = element.dataset.delay || '0';
+    const duration = element.dataset.duration || '700';
+    
+    Object.assign(element.style, {
+      opacity: animationConfig.defaults.enterAnimation.opacity,
+      transform: animationConfig.presets[preset].enter.transform,
+      transition: `all ${duration}ms cubic-bezier(0.215, 0.61, 0.355, 1) ${delay}ms`,
+      willChange: 'opacity, transform'
+    });
+  });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0) scale(1)';
+        observer.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
+
+  animatedElements.forEach(element => {
+    observer.observe(element);
+  });
+
+  setTimeout(() => {
+    document.body.classList.add('animations-ready');
+  }, 300);
+});
+
+const animationStyles = document.createElement('style');
+animationStyles.textContent = `
+  [data-animate] {
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+  
+  .animations-ready [data-animate] {
+    transition: all 0.7s cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    [data-animate] {
+      transition: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  }
+`;
+document.head.appendChild(animationStyles);
+</script>
 </body>
 </html>
