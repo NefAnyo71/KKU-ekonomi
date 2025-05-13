@@ -384,6 +384,20 @@
               const tc = document.getElementById('tc').value;
               const email = document.getElementById('email').value;
               const telefon = document.getElementById('telefon').value;
+
+              // TC Kimlik No doğrulama
+              const tcRegex = /^[1-9][0-9]{10}$/;
+              if (!tcRegex.test(tc)) {
+               alert("Geçerli bir TC Kimlik Numarası giriniz (11 haneli, sadece rakam, 0 ile başlamaz).");
+               return;
+              }
+
+              // Telefon numarası doğrulama
+              const telefonRegex = /^5[0-9]{9}$/;
+              if (!telefonRegex.test(telefon)) {
+               alert("Geçerli bir telefon numarası giriniz (örnek: 5XXXXXXXXX, 10 haneli).");
+              return;
+              }
       
               try {
                 await addDoc(collection(db, "geziform"), {
