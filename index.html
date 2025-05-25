@@ -852,19 +852,30 @@ async function trackMinimalSession() {
   });
 }
 
-// Fonksiyonları global yapıyoruz ki HTML'deki butonlar erişebilsin
 window.acceptCookies = function() {
+  if (cookieConsent !== null) return; // Zaten seçim yapılmışsa tekrar işlem yapma
   cookieConsent = true;
   document.getElementById('cookieBanner').style.display = 'none';
   startTracking();
 }
 
 window.rejectCookies = function() {
+  if (cookieConsent !== null) return; // Zaten seçim yapılmışsa tekrar işlem yapma
   cookieConsent = false;
   document.getElementById('cookieBanner').style.display = 'none';
   console.log("Kullanıcı çerezleri reddetti, sadece IP verisi toplanıyor.");
   trackMinimalSession();
 }
+
+// Sayfa yüklendiğinde, 10 saniye içinde seçim yapılmazsa otomatik reddet
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    if (cookieConsent === null) {
+      console.log("Kullanıcı seçim yapmadı, otomatik reddedildi.");
+      window.rejectCookies();
+    }
+  }, 10000); // 10 saniye (10000 ms)
+});
 
       document.getElementById('feedback').addEventListener('submit', async function(e) {
         e.preventDefault();
