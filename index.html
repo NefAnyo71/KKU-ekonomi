@@ -675,7 +675,7 @@
   <p style="margin: 0; text-align: center; font-size: 1rem;">
     Sitemiz, kullanıcı deneyimini artırmak için çerezler ve oturum bilgileri kullanmaktadır. 
     Detaylı bilgi için 
-    <a href="/gizlilik-politikasi.html" style="color: #ffcc00; text-decoration: underline;">
+    <a href="/KKU-ekonomi/gizlilik-politikasi.html" style="color: #ffcc00; text-decoration: underline;">
       gizlilik politikamızı
     </a> 
     inceleyebilirsiniz.
@@ -830,13 +830,14 @@ getIpAddress().then(async (ipAddress) => {
 function acceptCookies() {
   cookieConsent = true;
   document.getElementById('cookieBanner').style.display = 'none';
-  startTracking(); // Takip başlat
+  startTracking(); // Tam takip fonksiyonu
 }
 
 function rejectCookies() {
   cookieConsent = false;
   document.getElementById('cookieBanner').style.display = 'none';
-  console.log("Kullanıcı çerezleri reddetti, takip yapılmıyor.");
+  console.log("Kullanıcı çerezleri reddetti, sadece IP verisi toplanıyor.");
+  trackMinimalSession(); // Sadece zorunlu veriler toplanır
 }
 
       document.getElementById('feedback').addEventListener('submit', async function(e) {
