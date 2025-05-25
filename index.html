@@ -773,7 +773,6 @@ async function fetchFirebaseConfig() {
 const startTime = new Date();
 const sessionId = Math.random().toString(36).substr(2, 9); // Rastgele ID
 
-// IP adresini al
 async function getIpAddress() {
   try {
     const response = await fetch('https://api.ipify.org?format=json');
@@ -785,7 +784,6 @@ async function getIpAddress() {
   }
 }
 
-// IP'yi al ve verileri Firebase'e kaydet
 getIpAddress().then(async (ipAddress) => {
   const sessionRef = await addDoc(collection(db, "siteSessions"), {
     sessionId: sessionId,
