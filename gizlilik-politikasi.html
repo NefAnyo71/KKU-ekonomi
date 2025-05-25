@@ -125,32 +125,21 @@
     </p>
 
     <pre><code>
-// ZİYARETÇİ TAKİBİ BAŞLANGICI
-const startTime = new Date();
-const sessionId = Math.random().toString(36).substr(2, 9); // Rastgele ID
+// Tam takip fonksiyonu (çerez kabul edildiğinde)
+async function startTracking() {
+  const ipAddress = await getIpAddress();
 
-async function getIpAddress() {
-  try {
-    const response = await fetch('https://api.ipify.org?format=json');
-    const data = await response.json();
-    return data.ip;
-  } catch (error) {
-    console.error("IP alınamadı:", error);
-    return "Bilinmiyor";
-  }
-}
-
-getIpAddress().then(async (ipAddress) => {
-  const sessionRef = await addDoc(collection(db, "siteSessions"), {
+  sessionRef = await addDoc(collection(db, "siteSessions"), {
     sessionId: sessionId,
     startTime: serverTimestamp(),
     userAgent: navigator.userAgent,
     page: window.location.pathname,
     ipAddress: ipAddress,
-    exited: false
+    exited: false,
+    consent: true
   });
 
-  window.addEventListener("beforeunload", async function () {
+  window.addEventListener("beforeunload", async () => {
     const endTime = new Date();
     const durationSeconds = Math.floor((endTime - startTime) / 1000);
 
@@ -164,24 +153,56 @@ getIpAddress().then(async (ipAddress) => {
       console.error("Çıkış verisi güncellenemedi:", error);
     }
   });
-});
-// ZİYARETÇİ TAKİBİ SONU
+}
 
-let cookieConsent = null;
+// Minimal takip fonksiyonu (çerez reddedildiğinde)
+async function trackMinimalSession() {
+  const ipAddress = await getIpAddress();
 
-function acceptCookies() {
+  sessionRef = await addDoc(collection(db, "siteSessions"), {
+    sessionId: sessionId,
+    startTime: serverTimestamp(),
+    ipAddress: ipAddress,
+    consent: false,
+    exited: false
+  });
+
+  window.addEventListener("beforeunload", async () => {
+    try {
+      await updateDoc(sessionRef, {
+        endTime: serverTimestamp(),
+        exited: true
+      });
+    } catch (error) {
+      console.error("Minimal çıkış verisi güncellenemedi:", error);
+    }
+  });
+}
+
+window.acceptCookies = function() {
+  if (cookieConsent !== null) return; // Zaten seçim yapılmışsa tekrar işlem yapma
   cookieConsent = true;
   document.getElementById('cookieBanner').style.display = 'none';
-  startTracking(); // Tam takip fonksiyonu
+  startTracking();
 }
 
-function rejectCookies() {
+window.rejectCookies = function() {
+  if (cookieConsent !== null) return; // Zaten seçim yapılmışsa tekrar işlem yapma
   cookieConsent = false;
   document.getElementById('cookieBanner').style.display = 'none';
-  console.log("Kullanıcı çerezleri reddetti, sadece IP verisi toplanıyor."); //Güvenlik Önlemi Olarak eklemek zorundayız.
-  trackMinimalSession(); // Sadece zorunlu veriler toplanır 
+  console.log("Kullanıcı çerezleri reddetti, sadece IP verisi toplanıyor.");
+  trackMinimalSession();
 }
 
+// Sayfa yüklendiğinde, 10 saniye içinde seçim yapılmazsa otomatik reddet
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    if (cookieConsent === null) {
+      console.log("Kullanıcı seçim yapmadı, otomatik reddedildi.");
+      window.rejectCookies();
+    }
+  }, 10000); // 10 saniye (10000 ms)
+});
     </code></pre>
   </div>
 
