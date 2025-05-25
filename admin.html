@@ -185,6 +185,96 @@
     </div>
 
     <script>
+    // Çerez işlemleri için yardımcı fonksiyonlar
+    function setCookie(name, value, days) {
+        const expires = new Date();
+        expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+        document.cookie = `${name}=${encodeURIComponent(value)};expires=${expires.toUTCString()};path=/;SameSite=Lax;Secure`;
+    }
+
+    function getCookie(name) {
+        const cookieArr = document.cookie.split(';');
+        for(let i = 0; i < cookieArr.length; i++) {
+            const cookiePair = cookieArr[i].trim().split('=');
+            if(name === cookiePair[0]) {
+                return decodeURIComponent(cookiePair[1]);
+            }
+        }
+        return null;
+    }
+
+    function deleteCookie(name) {
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;SameSite=Lax;Secure`;
+    }
+
+    // Kullanıcı bilgilerini çereze kaydet
+    function saveCredentialsToCookie(email, password, remember) {
+        if (remember) {
+            // Bilgileri şifreleyerek sakla (basit bir Base64 şifreleme)
+            const credentials = {
+                email: btoa(unescape(encodeURIComponent(email))),
+                password: btoa(unescape(encodeURIComponent(password)))
+            };
+            setCookie('admin_credentials', JSON.stringify(credentials), 120); // 120 gün saklayacak
+        } else {
+            deleteCookie('admin_credentials');
+        }
+    }
+
+    // Çerezden kullanıcı bilgilerini yükle
+    function loadCredentialsFromCookie() {
+        const credentialsCookie = getCookie('admin_credentials');
+        if (credentialsCookie) {
+            try {
+                const credentials = JSON.parse(credentialsCookie);
+                return {
+                    email: decodeURIComponent(escape(atob(credentials.email))),
+                    password: decodeURIComponent(escape(atob(credentials.password)))
+                };
+            } catch (e) {
+                console.error('Çerez bilgileri okunamadı:', e);
+                return null;
+            }
+        }
+        return null;
+    }
+
+    // Sayfa yüklendiğinde çerezden bilgileri yükle
+    document.addEventListener('DOMContentLoaded', function() {
+        const credentials = loadCredentialsFromCookie();
+        if (credentials) {
+            document.getElementById('login-email').value = credentials.email;
+            document.getElementById('login-password').value = credentials.password;
+            
+            // Otomatik giriş yapmayı dene
+            setTimeout(() => {
+                document.getElementById('login-form').dispatchEvent(new Event('submit'));
+            }, 500);
+        }
+    });
+
+    // Giriş formunu çerez işlemleri için güncelle
+    const loginForm = document.getElementById('login-form');
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+            const rememberMe = true; // Her zaman hatırla (isterseniz checkbox ekleyebilirsiniz)
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            saveCredentialsToCookie(email, password, rememberMe);
+        });
+    }
+
+    // Çıkış yapıldığında çerezleri temizle
+    const logoutButton = document.querySelector('.logout-btn');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', function() {
+            deleteCookie('admin_credentials');
+        });
+    }
+</script>
+    
+    <script>
         // Firebase configuration and initialization
         let auth;
         let db;
