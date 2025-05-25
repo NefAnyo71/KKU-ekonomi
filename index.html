@@ -782,9 +782,10 @@ async function fetchFirebaseConfig() {
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
 
-// ZİYARETÇİ TAKİBİ BAŞLANGICI
+let cookieConsent = null;
 const startTime = new Date();
 const sessionId = Math.random().toString(36).substr(2, 9); // Rastgele ID
+let sessionRef = null;
 
 async function getIpAddress() {
   try {
@@ -797,18 +798,21 @@ async function getIpAddress() {
   }
 }
 
-getIpAddress().then(async (ipAddress) => {
-  const sessionRef = await addDoc(collection(db, "siteSessions"), {
+// Tam takip fonksiyonu (çerez kabul edildiğinde)
+async function startTracking() {
+  const ipAddress = await getIpAddress();
+
+  sessionRef = await addDoc(collection(db, "siteSessions"), {
     sessionId: sessionId,
     startTime: serverTimestamp(),
     userAgent: navigator.userAgent,
     page: window.location.pathname,
     ipAddress: ipAddress,
-    exited: false
+    exited: false,
+    consent: true
   });
 
-  // Sayfa kapanırken güncelle
-  window.addEventListener("beforeunload", async function () {
+  window.addEventListener("beforeunload", async () => {
     const endTime = new Date();
     const durationSeconds = Math.floor((endTime - startTime) / 1000);
 
@@ -822,22 +826,44 @@ getIpAddress().then(async (ipAddress) => {
       console.error("Çıkış verisi güncellenemedi:", error);
     }
   });
-});
-// ZİYARETÇİ TAKİBİ SONU
+}
 
-      let cookieConsent = null;
+// Minimal takip fonksiyonu (çerez reddedildiğinde)
+async function trackMinimalSession() {
+  const ipAddress = await getIpAddress();
 
+  sessionRef = await addDoc(collection(db, "siteSessions"), {
+    sessionId: sessionId,
+    startTime: serverTimestamp(),
+    ipAddress: ipAddress,
+    consent: false,
+    exited: false
+  });
+
+  window.addEventListener("beforeunload", async () => {
+    try {
+      await updateDoc(sessionRef, {
+        endTime: serverTimestamp(),
+        exited: true
+      });
+    } catch (error) {
+      console.error("Minimal çıkış verisi güncellenemedi:", error);
+    }
+  });
+}
+
+// Fonksiyonları global yapıyoruz ki HTML'deki butonlar erişebilsin
 window.acceptCookies = function() {
   cookieConsent = true;
   document.getElementById('cookieBanner').style.display = 'none';
-  startTracking(); // Tam takip fonksiyonu
+  startTracking();
 }
 
 window.rejectCookies = function() {
   cookieConsent = false;
   document.getElementById('cookieBanner').style.display = 'none';
   console.log("Kullanıcı çerezleri reddetti, sadece IP verisi toplanıyor.");
-  trackMinimalSession(); // Sadece zorunlu veriler toplanır
+  trackMinimalSession();
 }
 
       document.getElementById('feedback').addEventListener('submit', async function(e) {
