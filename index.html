@@ -827,13 +827,13 @@ getIpAddress().then(async (ipAddress) => {
 
       let cookieConsent = null;
 
-function acceptCookies() {
+window.acceptCookies = function() {
   cookieConsent = true;
   document.getElementById('cookieBanner').style.display = 'none';
   startTracking(); // Tam takip fonksiyonu
 }
 
-function rejectCookies() {
+window.rejectCookies = function() {
   cookieConsent = false;
   document.getElementById('cookieBanner').style.display = 'none';
   console.log("Kullanıcı çerezleri reddetti, sadece IP verisi toplanıyor.");
