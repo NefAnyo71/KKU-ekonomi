@@ -653,10 +653,61 @@
   </div>
 </div>
 -->
-<div id="cookieBanner" style="position: fixed; bottom: 0; background: rgba(0,0,0,0.8); color: white; padding: 15px; width: 100%; text-align: center; z-index: 1000;">
-  Sitemiz, kullanıcı deneyimini artırmak için çerezler ve oturum bilgileri kullanmaktadır. Detaylı bilgi için <a href="/gizlilik-politikasi.html" style="color: #ffcc00;">gizlilik politikamızı</a> inceleyebilirsiniz.
-  <button onclick="document.getElementById('cookieBanner').style.display='none';" style="margin-left: 15px;">Anladım</button>
+<div id="cookieBanner" style="
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #2c2c2c;
+  color: #fff;
+  padding: 20px 30px;
+  width: 90%;
+  max-width: 700px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Poppins', sans-serif;
+  animation: fadeInUp 0.5s ease-out;
+">
+  <p style="margin: 0; text-align: center; font-size: 1rem;">
+    Sitemiz, kullanıcı deneyimini artırmak için çerezler ve oturum bilgileri kullanmaktadır. 
+    Detaylı bilgi için 
+    <a href="/gizlilik-politikasi.html" style="color: #ffcc00; text-decoration: underline;">
+      gizlilik politikamızı
+    </a> 
+    inceleyebilirsiniz.
+  </p>
+  <button onclick="document.getElementById('cookieBanner').style.display='none';" style="
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: #ffcc00;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+  " onmouseover="this.style.background='#e6b800'" onmouseout="this.style.background='#ffcc00'">
+    Anladım
+  </button>
 </div>
+
+<style>
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 40px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+</style>
+
 
 
 <script type="module">
@@ -718,33 +769,51 @@ async function fetchFirebaseConfig() {
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
 
-          // ZİYARETÇİ TAKİBİ BAŞLANGICI
-      const startTime = new Date();
-      const sessionId = Math.random().toString(36).substr(2, 9); // Rastgele ID
+// ZİYARETÇİ TAKİBİ BAŞLANGICI
+const startTime = new Date();
+const sessionId = Math.random().toString(36).substr(2, 9); // Rastgele ID
 
-      const sessionRef = await addDoc(collection(db, "siteSessions"), {
-        sessionId: sessionId,
-        startTime: serverTimestamp(),
-        userAgent: navigator.userAgent,
-        page: window.location.pathname,
-        exited: false
+// IP adresini al
+async function getIpAddress() {
+  try {
+    const response = await fetch('https://api.ipify.org?format=json');
+    const data = await response.json();
+    return data.ip;
+  } catch (error) {
+    console.error("IP alınamadı:", error);
+    return "Bilinmiyor";
+  }
+}
+
+// IP'yi al ve verileri Firebase'e kaydet
+getIpAddress().then(async (ipAddress) => {
+  const sessionRef = await addDoc(collection(db, "siteSessions"), {
+    sessionId: sessionId,
+    startTime: serverTimestamp(),
+    userAgent: navigator.userAgent,
+    page: window.location.pathname,
+    ipAddress: ipAddress,
+    exited: false
+  });
+
+  // Sayfa kapanırken güncelle
+  window.addEventListener("beforeunload", async function () {
+    const endTime = new Date();
+    const durationSeconds = Math.floor((endTime - startTime) / 1000);
+
+    try {
+      await updateDoc(sessionRef, {
+        endTime: serverTimestamp(),
+        durationSeconds: durationSeconds,
+        exited: true
       });
+    } catch (error) {
+      console.error("Çıkış verisi güncellenemedi:", error);
+    }
+  });
+});
+// ZİYARETÇİ TAKİBİ SONU
 
-      window.addEventListener("beforeunload", async function () {
-      const endTime = new Date();
-      const durationSeconds = Math.floor((endTime - startTime) / 1000);
-
-      try {
-        await updateDoc(sessionRef, {
-          endTime: serverTimestamp(),
-          durationSeconds: durationSeconds,
-          exited: true
-        });
-      } catch (error) {
-        console.error("Çıkış verisi güncellenemedi:", error);
-      }
-    });
-    // ZİYARETÇİ TAKİBİ SONU
 
 
       document.getElementById('feedback').addEventListener('submit', async function(e) {
