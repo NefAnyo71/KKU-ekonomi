@@ -680,19 +680,32 @@
     </a> 
     inceleyebilirsiniz.
   </p>
-  <button onclick="document.getElementById('cookieBanner').style.display='none';" style="
-    margin-top: 15px;
-    padding: 10px 20px;
-    background: #ffcc00;
-    color: #000;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background 0.3s;
-  " onmouseover="this.style.background='#e6b800'" onmouseout="this.style.background='#ffcc00'">
-    Anladım
-  </button>
+  <div style="margin-top: 15px; display: flex; gap: 10px;">
+    <button onclick="acceptCookies()" style="
+      padding: 10px 20px;
+      background: #ffcc00;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+    " onmouseover="this.style.background='#e6b800'" onmouseout="this.style.background='#ffcc00'">
+      Anladım
+    </button>
+    <button onclick="rejectCookies()" style="
+      padding: 10px 20px;
+      background: #888;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+    " onmouseover="this.style.background='#666'" onmouseout="this.style.background='#888'">
+      Reddet
+    </button>
+  </div>
 </div>
 
 <style>
@@ -812,7 +825,19 @@ getIpAddress().then(async (ipAddress) => {
 });
 // ZİYARETÇİ TAKİBİ SONU
 
+      let cookieConsent = null;
 
+function acceptCookies() {
+  cookieConsent = true;
+  document.getElementById('cookieBanner').style.display = 'none';
+  startTracking(); // Takip başlat
+}
+
+function rejectCookies() {
+  cookieConsent = false;
+  document.getElementById('cookieBanner').style.display = 'none';
+  console.log("Kullanıcı çerezleri reddetti, takip yapılmıyor.");
+}
 
       document.getElementById('feedback').addEventListener('submit', async function(e) {
         e.preventDefault();
