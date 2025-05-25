@@ -653,10 +653,6 @@
   </div>
 </div>
 -->
-<div id="cookieBanner" style="position: fixed; bottom: 0; background: rgba(0,0,0,0.8); color: white; padding: 15px; width: 100%; text-align: center; z-index: 1000;">
-  Sitemiz, kullanıcı deneyimini artırmak için çerezler ve oturum bilgileri kullanmaktadır. Detaylı bilgi için <a href="/gizlilik-politikasi.html" style="color: #ffcc00;">gizlilik politikamızı</a> inceleyebilirsiniz.
-  <button onclick="document.getElementById('cookieBanner').style.display='none';" style="margin-left: 15px;">Anladım</button>
-</div>
 
 
 <script type="module">
@@ -690,9 +686,9 @@ async function fetchFirebaseConfig() {
 
     if (error.name === 'TypeError') {
       if (isIOS && isSafari) {
-        alert('iPhone Safari tarayıcısında ağ hatası oluştu. Bu, CORS engeli, HTTPS problemi ya da Apple’ın gizlilik özelliklerinden kaynaklanabilir. Lütfen yönetim ekibimizle görüşün ve hata kodunu bildirin. Sorun yaşadığınızdan dolayı özür dileriz.');
+        alert('iPhone Safari tarayıcısında ağ hatası oluştu. Bu, CORS engeli, HTTPS problemi ya da Apple’ın gizlilik özelliklerinden kaynaklanabilir.Lütfen yönetim ekibimizle görüşün ve hata kodunu bildirin.Sorun yaşadığınızdan dolayı özür dileriz.');
       } else {
-        alert('Ağ bağlantısı hatası oluştu. İnternet bağlantınızı veya sunucu durumunu kontrol edin. Sorun yaşadığınızdan dolayı özür dileriz.');
+        alert('Ağ bağlantısı hatası oluştu. İnternet bağlantınızı veya sunucu durumunu kontrol edin.Sorun yaşadığınızdan dolayı özür dileriz.');
       }
     } else {
       alert('Yapılandırma hatası oluştu Sorun yaşadığınızdan dolayı özür dileriz.: ' + error.message);
@@ -702,131 +698,97 @@ async function fetchFirebaseConfig() {
   }
 }
 
-async function initializeFirebase() {
-  const firebaseConfig = await fetchFirebaseConfig();
 
-  if (!firebaseConfig) {
-    return;
-  }
+  async function initializeFirebase() {
+    const firebaseConfig = await fetchFirebaseConfig();
 
-  try {
-    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js');
-    const { 
-      getFirestore, collection, addDoc, updateDoc, doc, getDoc, serverTimestamp, arrayUnion 
-    } = await import('https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js');
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    // ---------------------------
-    // DETAİLLI ZİYARETÇİ TAKİBİ BAŞLANGICI
-    // ---------------------------
-
-    // Kullanıcıya özel visitorId localStorage'da saklanır
-    let visitorId = localStorage.getItem('visitorId');
-    if (!visitorId) {
-      visitorId = Math.random().toString(36).substr(2, 9);
-      localStorage.setItem('visitorId', visitorId);
+    if (!firebaseConfig) {
+      return;
     }
 
-    const userDocRef = doc(db, 'visitors', visitorId);
-    const userDocSnap = await getDoc(userDocRef);
+    try {
+      const { initializeApp } = await import('https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js');
+      const { getFirestore, collection, addDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js');
 
-    if (!userDocSnap.exists()) {
-      // İlk ziyaret
-      await setDoc(userDocRef, {
-        visitorId: visitorId,
-        visitCount: 1,
-        totalDurationSeconds: 0,
-        visitedPages: [window.location.pathname],
-        lastVisit: serverTimestamp()
-      });
-    } else {
-      // Daha önce ziyaret etmiş, ziyaret sayısını artır ve yeni sayfa varsa ekle
-      const data = userDocSnap.data();
-      const pages = data.visitedPages || [];
-      const currentPage = window.location.pathname;
-      const visitedPages = pages.includes(currentPage) ? pages : [...pages, currentPage];
 
-      await updateDoc(userDocRef, {
-        visitCount: data.visitCount + 1,
-        visitedPages: visitedPages,
-        lastVisit: serverTimestamp()
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+          // ZİYARETÇİ TAKİBİ BAŞLANGICI
+      const startTime = new Date();
+      const sessionId = Math.random().toString(36).substr(2, 9); // Rastgele ID
+
+      const sessionRef = await addDoc(collection(db, "siteSessions"), {
+        sessionId: sessionId,
+        startTime: serverTimestamp(),
+        userAgent: navigator.userAgent,
+        page: window.location.pathname,
+        exited: false
       });
+
+      window.addEventListener("beforeunload", async function () {
+      const endTime = new Date();
+      const durationSeconds = Math.floor((endTime - startTime) / 1000);
+
+      try {
+        await updateDoc(sessionRef, {
+          endTime: serverTimestamp(),
+          durationSeconds: durationSeconds,
+          exited: true
+        });
+      } catch (error) {
+        console.error("Çıkış verisi güncellenemedi:", error);
+      }
+    });
+    // ZİYARETÇİ TAKİBİ SONU
+
+
+      document.getElementById('feedback').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const form = this;
+
+
+        if (!form.checkValidity()) {
+          e.stopPropagation();
+          form.classList.add('was-validated');
+          return;
+        }
+
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const phone = document.getElementById('phone').value;
+        const subject = document.getElementById('subject').value;
+        const message = document.getElementById('message').value;
+
+        try {
+          await addDoc(collection(db, "feedback"), {
+            name: name,
+            email: email,
+            phone: phone,
+            subject: subject,
+            message: message,
+            timestamp: serverTimestamp()
+          });
+
+          alert('Mesajınız başarıyla gönderildi!');
+          form.reset();
+          form.classList.remove('was-validated');
+        } catch (error) {
+          console.error('Error adding document: ', error);
+          alert('Mesaj gönderilirken bir hata oluştu: ' + error.message);
+        }
+      });
+
+      
+      document.getElementById('displayYear').textContent = new Date().getFullYear();
+    } catch (error) {
+      console.error('Firebase başlatılırken bir hata oluştu:', error);
     }
-
-    // Sayfa kalma süresi hesaplama
-    const visitStartTime = Date.now();
-
-    window.addEventListener('beforeunload', async () => {
-      const visitEndTime = Date.now();
-      const duration = Math.floor((visitEndTime - visitStartTime) / 1000);
-
-      try {
-        const currentDataSnap = await getDoc(userDocRef);
-        let currentTotal = currentDataSnap.exists() ? currentDataSnap.data().totalDurationSeconds : 0;
-        currentTotal += duration;
-
-        await updateDoc(userDocRef, {
-          totalDurationSeconds: currentTotal,
-          lastVisit: serverTimestamp()
-        });
-      } catch (error) {
-        console.error('Ziyaret süresi güncellenemedi:', error);
-      }
-    });
-
-    // ---------------------------
-    // DETAİLLI ZİYARETÇİ TAKİBİ SONU
-    // ---------------------------
-
-
-    // Feedback form submit işlemi
-    document.getElementById('feedback').addEventListener('submit', async function(e) {
-      e.preventDefault();
-
-      const form = this;
-
-      if (!form.checkValidity()) {
-        e.stopPropagation();
-        form.classList.add('was-validated');
-        return;
-      }
-
-      const name = document.getElementById('name').value;
-      const email = document.getElementById('email').value;
-      const phone = document.getElementById('phone').value;
-      const subject = document.getElementById('subject').value;
-      const message = document.getElementById('message').value;
-
-      try {
-        await addDoc(collection(db, "feedback"), {
-          name: name,
-          email: email,
-          phone: phone,
-          subject: subject,
-          message: message,
-          timestamp: serverTimestamp()
-        });
-
-        alert('Mesajınız başarıyla gönderildi!');
-        form.reset();
-        form.classList.remove('was-validated');
-      } catch (error) {
-        console.error('Error adding document: ', error);
-        alert('Mesaj gönderilirken bir hata oluştu: ' + error.message);
-      }
-    });
-
-    document.getElementById('displayYear').textContent = new Date().getFullYear();
-
-  } catch (error) {
-    console.error('Firebase başlatılırken bir hata oluştu:', error);
   }
-}
-initializeFirebase();
+  initializeFirebase();
+  
 </script>
-
 <script>
   $(document).ready(function () {
     $(".service_owl-carousel").owlCarousel({
