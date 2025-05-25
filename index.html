@@ -718,33 +718,156 @@ async function fetchFirebaseConfig() {
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
 
-          // ZİYARETÇİ TAKİBİ BAŞLANGICI
-      const startTime = new Date();
-      const sessionId = Math.random().toString(36).substr(2, 9); // Rastgele ID
+       // ZİYARETÇİ TAKİBİ BAŞLANGICI
 
-      const sessionRef = await addDoc(collection(db, "siteSessions"), {
-        sessionId: sessionId,
-        startTime: serverTimestamp(),
-        userAgent: navigator.userAgent,
-        page: window.location.pathname,
-        exited: false
+// Kullanıcı için benzersiz ID oluştur (localStorage'da saklanır)
+const getOrCreateVisitorId = () => {
+  let visitorId = localStorage.getItem('visitorId');
+  if (!visitorId) {
+    visitorId = Math.random().toString(36).substr(2, 9) + '-' + Date.now().toString(36);
+    localStorage.setItem('visitorId', visitorId);
+  }
+  return visitorId;
+};
+
+// Oturum için benzersiz ID
+const sessionId = Math.random().toString(36).substr(2, 9);
+const startTime = new Date();
+const visitorId = getOrCreateVisitorId();
+
+// Ek bilgiler topla
+const userData = {
+  userAgent: navigator.userAgent,
+  screenWidth: window.screen.width,
+  screenHeight: window.screen.height,
+  language: navigator.language,
+  timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+  referrer: document.referrer || 'direct',
+  page: window.location.pathname,
+  isMobile: /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+};
+
+// Ziyaretçi bilgilerini Firebase'e kaydet
+const trackVisitor = async () => {
+  try {
+    // Ziyaretçi doküman referansı
+    const visitorRef = doc(db, "visitors", visitorId);
+    
+    // Ziyaretçi bilgilerini güncelle (ilk kez mi geldi kontrol et)
+    await setDoc(visitorRef, {
+      firstVisit: serverTimestamp(),
+      lastVisit: serverTimestamp(),
+      totalVisits: increment(1),
+      ...userData
+    }, { merge: true });
+    
+    // Yeni oturum oluştur
+    const sessionRef = await addDoc(collection(db, "visitorSessions"), {
+      visitorId: visitorId,
+      sessionId: sessionId,
+      startTime: serverTimestamp(),
+      ...userData,
+      exited: false,
+      events: []
+    });
+    
+    // Sayfa değişikliklerini takip et
+    let previousPage = window.location.pathname;
+    
+    const trackPageChange = async () => {
+      const currentPage = window.location.pathname;
+      if (previousPage !== currentPage) {
+        const pageChangeTime = new Date();
+        await updateDoc(sessionRef, {
+          events: arrayUnion({
+            type: 'pageChange',
+            from: previousPage,
+            to: currentPage,
+            time: serverTimestamp(),
+            timeSpentOnPrevious: Math.floor((pageChangeTime - startTime) / 1000)
+          })
+        });
+        previousPage = currentPage;
+      }
+    };
+    
+    // Tıklama etkinliklerini takip et (örnek olarak)
+    const trackClicks = (event) => {
+      const target = event.target;
+      if (target.tagName === 'A' || target.tagName === 'BUTTON') {
+        updateDoc(sessionRef, {
+          events: arrayUnion({
+            type: 'click',
+            element: target.tagName,
+            id: target.id || null,
+            class: target.className || null,
+            text: target.innerText.substring(0, 50),
+            href: target.href || null,
+            time: serverTimestamp()
+          })
+        });
+      }
+    };
+    
+    // Scroll etkinliklerini takip et
+    const trackScroll = () => {
+      const scrollDepth = (window.scrollY + window.innerHeight) / document.body.scrollHeight * 100;
+      updateDoc(sessionRef, {
+        events: arrayUnion({
+          type: 'scroll',
+          depth: Math.round(scrollDepth),
+          time: serverTimestamp()
+        })
       });
-
-      window.addEventListener("beforeunload", async function () {
+    };
+    
+    // Etkinlik dinleyicilerini ekle
+    window.addEventListener('popstate', trackPageChange);
+    window.addEventListener('click', trackClicks);
+    window.addEventListener('scroll', trackScroll);
+    
+    // Sayfadan çıkışı kaydet
+    window.addEventListener("beforeunload", async () => {
       const endTime = new Date();
       const durationSeconds = Math.floor((endTime - startTime) / 1000);
-
+      
       try {
         await updateDoc(sessionRef, {
           endTime: serverTimestamp(),
           durationSeconds: durationSeconds,
-          exited: true
+          exited: true,
+          events: arrayUnion({
+            type: 'sessionEnd',
+            time: serverTimestamp(),
+            duration: durationSeconds
+          })
+        });
+        
+        // Ziyaretçinin toplam oturum süresini güncelle
+        const visitorRef = doc(db, "visitors", visitorId);
+        await updateDoc(visitorRef, {
+          totalTimeSpent: increment(durationSeconds),
+          lastVisit: serverTimestamp()
         });
       } catch (error) {
         console.error("Çıkış verisi güncellenemedi:", error);
       }
+      
+      // Etkinlik dinleyicilerini kaldır
+      window.removeEventListener('popstate', trackPageChange);
+      window.removeEventListener('click', trackClicks);
+      window.removeEventListener('scroll', trackScroll);
     });
-    // ZİYARETÇİ TAKİBİ SONU
+    
+  } catch (error) {
+    console.error("Takip sistemi hatası:", error);
+  }
+};
+
+// Takip sistemini başlat
+trackVisitor();
+
+// ZİYARETÇİ TAKİBİ SONU
 
 
       document.getElementById('feedback').addEventListener('submit', async function(e) {
