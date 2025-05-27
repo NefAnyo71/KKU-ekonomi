@@ -852,30 +852,47 @@ async function trackMinimalSession() {
   });
 }
 
+window.addEventListener('load', () => {
+  const storedConsent = localStorage.getItem('cookieConsent');
+
+  if (storedConsent === 'true') {
+    cookieConsent = true;
+    document.getElementById('cookieBanner').style.display = 'none';
+    startTracking();
+  } else if (storedConsent === 'false') {
+    // Hayır denmişse, tekrar sorulsun
+    document.getElementById('cookieBanner').style.display = 'block';
+    cookieConsent = null; // tekrar seçim yapılması istenecek
+  } else {
+    // Hiç seçim yapılmamışsa, banner gösterilsin
+    document.getElementById('cookieBanner').style.display = 'block';
+
+    setTimeout(() => {
+      if (cookieConsent === null) {
+        console.log("Kullanıcı seçim yapmadı, otomatik reddedildi.");
+        window.rejectCookies();
+      }
+    }, 10000); // 10 saniye
+  }
+});
+
 window.acceptCookies = function() {
-  if (cookieConsent !== null) return; // Zaten seçim yapılmışsa tekrar işlem yapma
+  if (cookieConsent !== null) return;
   cookieConsent = true;
+  localStorage.setItem('cookieConsent', 'true');
   document.getElementById('cookieBanner').style.display = 'none';
   startTracking();
 }
 
 window.rejectCookies = function() {
-  if (cookieConsent !== null) return; // Zaten seçim yapılmışsa tekrar işlem yapma
+  if (cookieConsent !== null) return;
   cookieConsent = false;
+  localStorage.setItem('cookieConsent', 'false');
   document.getElementById('cookieBanner').style.display = 'none';
   console.log("Kullanıcı çerezleri reddetti, sadece IP verisi toplanıyor.");
   trackMinimalSession();
 }
 
-// Sayfa yüklendiğinde, 10 saniye içinde seçim yapılmazsa otomatik reddet
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    if (cookieConsent === null) {
-      console.log("Kullanıcı seçim yapmadı, otomatik reddedildi.");
-      window.rejectCookies();
-    }
-  }, 10000); // 10 saniye (10000 ms)
-});
 
       document.getElementById('feedback').addEventListener('submit', async function(e) {
         e.preventDefault();
