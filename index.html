@@ -784,9 +784,10 @@ async function fetchFirebaseConfig() {
 
 let cookieConsent = null;
 const startTime = new Date();
-const sessionId = Math.random().toString(36).substr(2, 9); // Rastgele ID
+const sessionId = Math.random().toString(36).substr(2, 9);
 let sessionRef = null;
 
+// IP adresi al
 async function getIpAddress() {
   try {
     const response = await fetch('https://api.ipify.org?format=json');
@@ -798,106 +799,118 @@ async function getIpAddress() {
   }
 }
 
-// Çerez kabul edildiğinde tam takip başlatılır
+// Kullanıcı çerezleri kabul ettiğinde detaylı takip başlat
 async function startTracking() {
   const ipAddress = await getIpAddress();
 
-  sessionRef = await addDoc(collection(db, "siteSessions"), {
-    sessionId: sessionId,
-    startTime: serverTimestamp(),
-    userAgent: navigator.userAgent,
-    page: window.location.pathname,
-    ipAddress: ipAddress,
-    exited: false,
-    consent: true
-  });
+  try {
+    sessionRef = await addDoc(collection(db, "siteSessions"), {
+      sessionId: sessionId,
+      startTime: serverTimestamp(),
+      userAgent: navigator.userAgent,
+      page: window.location.pathname,
+      ipAddress: ipAddress,
+      exited: false,
+      consent: true
+    });
 
-  window.addEventListener("beforeunload", async () => {
-    const endTime = new Date();
-    const durationSeconds = Math.floor((endTime - startTime) / 1000);
+    window.addEventListener("beforeunload", async () => {
+      const endTime = new Date();
+      const durationSeconds = Math.floor((endTime - startTime) / 1000);
 
-    try {
-      await updateDoc(sessionRef, {
-        endTime: serverTimestamp(),
-        durationSeconds: durationSeconds,
-        exited: true
-      });
-    } catch (error) {
-      console.error("Çıkış verisi güncellenemedi:", error);
-    }
-  });
+      try {
+        await updateDoc(sessionRef, {
+          endTime: serverTimestamp(),
+          durationSeconds: durationSeconds,
+          exited: true
+        });
+      } catch (error) {
+        console.error("Çıkış güncellenemedi:", error);
+      }
+    });
+  } catch (error) {
+    console.error("Detaylı oturum kaydı başarısız:", error);
+  }
 }
 
-// Çerez reddedildiğinde minimal takip yapılır
+// Kullanıcı çerezleri reddettiğinde minimal takip başlat
 async function trackMinimalSession() {
   const ipAddress = await getIpAddress();
 
-  sessionRef = await addDoc(collection(db, "siteSessions"), {
-    sessionId: sessionId,
-    startTime: serverTimestamp(),
-    ipAddress: ipAddress,
-    consent: false,
-    exited: false
-  });
+  try {
+    sessionRef = await addDoc(collection(db, "siteSessions"), {
+      sessionId: sessionId,
+      startTime: serverTimestamp(),
+      ipAddress: ipAddress,
+      consent: false,
+      exited: false
+    });
 
-  window.addEventListener("beforeunload", async () => {
-    try {
-      await updateDoc(sessionRef, {
-        endTime: serverTimestamp(),
-        exited: true
-      });
-    } catch (error) {
-      console.error("Minimal çıkış verisi güncellenemedi:", error);
-    }
-  });
+    window.addEventListener("beforeunload", async () => {
+      try {
+        await updateDoc(sessionRef, {
+          endTime: serverTimestamp(),
+          exited: true
+        });
+      } catch (error) {
+        console.error("Minimal çıkış güncellenemedi:", error);
+      }
+    });
+  } catch (error) {
+    console.error("Minimal oturum kaydı başarısız:", error);
+  }
 }
 
-// Sayfa yüklendiğinde kullanıcı onayı kontrol edilir
+// Sayfa yüklendiğinde kullanıcı çerez tercihine göre davran
 window.addEventListener('load', () => {
   const storedConsent = localStorage.getItem('cookieConsent');
-  console.log("Stored consent:", storedConsent); // Debug amaçlı
+  const banner = document.getElementById('cookieBanner');
 
   if (storedConsent === 'true') {
     cookieConsent = true;
-    document.getElementById('cookieBanner').style.display = 'none';
+    if (banner) banner.style.display = 'none';
     startTracking();
-
   } else if (storedConsent === 'false') {
     cookieConsent = false;
-    document.getElementById('cookieBanner').style.display = 'none';
+    if (banner) banner.style.display = 'none';
     trackMinimalSession();
-
   } else {
-    // Kullanıcı henüz karar vermedi, banner gösterilir
     cookieConsent = null;
-    document.getElementById('cookieBanner').style.display = 'block';
+    if (banner) banner.style.display = 'flex';
 
-    // 10 saniye içinde seçim yapılmazsa otomatik reddet
     setTimeout(() => {
       if (cookieConsent === null) {
         console.log("Kullanıcı seçim yapmadı, otomatik reddedildi.");
-        window.rejectCookies();
+        rejectCookies(); // `window.` kullanmaya gerek yok
       }
     }, 10000);
   }
 });
 
-window.acceptCookies = function() {
+// Çerez kabul etme fonksiyonu
+function acceptCookies() {
   if (cookieConsent !== null) return;
   cookieConsent = true;
   localStorage.setItem('cookieConsent', 'true');
-  document.getElementById('cookieBanner').style.display = 'none';
+  const banner = document.getElementById('cookieBanner');
+  if (banner) banner.style.display = 'none';
   startTracking();
 }
 
-window.rejectCookies = function() {
+// Çerez reddetme fonksiyonu
+function rejectCookies() {
   if (cookieConsent !== null) return;
   cookieConsent = false;
   localStorage.setItem('cookieConsent', 'false');
-  document.getElementById('cookieBanner').style.display = 'none';
+  const banner = document.getElementById('cookieBanner');
+  if (banner) banner.style.display = 'none';
   console.log("Kullanıcı çerezleri reddetti, sadece IP verisi toplanıyor.");
   trackMinimalSession();
 }
+
+// Global erişim için window'a ekle
+window.acceptCookies = acceptCookies;
+window.rejectCookies = rejectCookies;
 
 
 
