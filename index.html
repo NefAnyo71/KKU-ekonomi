@@ -798,7 +798,7 @@ async function getIpAddress() {
   }
 }
 
-// Tam takip fonksiyonu (çerez kabul edildiğinde)
+// Çerez kabul edildiğinde tam takip başlatılır
 async function startTracking() {
   const ipAddress = await getIpAddress();
 
@@ -828,7 +828,7 @@ async function startTracking() {
   });
 }
 
-// Minimal takip fonksiyonu (çerez reddedildiğinde)
+// Çerez reddedildiğinde minimal takip yapılır
 async function trackMinimalSession() {
   const ipAddress = await getIpAddress();
 
@@ -852,23 +852,27 @@ async function trackMinimalSession() {
   });
 }
 
+// Sayfa yüklendiğinde kullanıcı onayı kontrol edilir
 window.addEventListener('load', () => {
   const storedConsent = localStorage.getItem('cookieConsent');
-  console.log("Stored consent:", storedConsent); // DEBUG için
+  console.log("Stored consent:", storedConsent); // Debug amaçlı
 
-  if (storedConsent == 'true') {
-    console.log("Kullanıcı önceden kabul etmiş.");
+  if (storedConsent === 'true') {
     cookieConsent = true;
     document.getElementById('cookieBanner').style.display = 'none';
     startTracking();
-  } else if (storedConsent == 'false') {
-    console.log("Kullanıcı önceden reddetmiş.");
-    document.getElementById('cookieBanner').style.display = 'block';
-    cookieConsent = null;
+
+  } else if (storedConsent === 'false') {
+    cookieConsent = false;
+    document.getElementById('cookieBanner').style.display = 'none';
+    trackMinimalSession();
+
   } else {
-    console.log("Kullanıcıdan henüz seçim alınmamış.");
+    // Kullanıcı henüz karar vermedi, banner gösterilir
+    cookieConsent = null;
     document.getElementById('cookieBanner').style.display = 'block';
 
+    // 10 saniye içinde seçim yapılmazsa otomatik reddet
     setTimeout(() => {
       if (cookieConsent === null) {
         console.log("Kullanıcı seçim yapmadı, otomatik reddedildi.");
@@ -877,7 +881,6 @@ window.addEventListener('load', () => {
     }, 10000);
   }
 });
-
 
 window.acceptCookies = function() {
   if (cookieConsent !== null) return;
@@ -895,6 +898,7 @@ window.rejectCookies = function() {
   console.log("Kullanıcı çerezleri reddetti, sadece IP verisi toplanıyor.");
   trackMinimalSession();
 }
+
 
 
       document.getElementById('feedback').addEventListener('submit', async function(e) {
