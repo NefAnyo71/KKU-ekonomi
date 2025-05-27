@@ -854,17 +854,19 @@ async function trackMinimalSession() {
 
 window.addEventListener('load', () => {
   const storedConsent = localStorage.getItem('cookieConsent');
+  console.log("Stored consent:", storedConsent); // DEBUG için
 
-  if (storedConsent === 'true') {
+  if (storedConsent == 'true') {
+    console.log("Kullanıcı önceden kabul etmiş.");
     cookieConsent = true;
     document.getElementById('cookieBanner').style.display = 'none';
     startTracking();
-  } else if (storedConsent === 'false') {
-    // Hayır denmişse, tekrar sorulsun
+  } else if (storedConsent == 'false') {
+    console.log("Kullanıcı önceden reddetmiş.");
     document.getElementById('cookieBanner').style.display = 'block';
-    cookieConsent = null; // tekrar seçim yapılması istenecek
+    cookieConsent = null;
   } else {
-    // Hiç seçim yapılmamışsa, banner gösterilsin
+    console.log("Kullanıcıdan henüz seçim alınmamış.");
     document.getElementById('cookieBanner').style.display = 'block';
 
     setTimeout(() => {
@@ -872,9 +874,10 @@ window.addEventListener('load', () => {
         console.log("Kullanıcı seçim yapmadı, otomatik reddedildi.");
         window.rejectCookies();
       }
-    }, 10000); // 10 saniye
+    }, 10000);
   }
 });
+
 
 window.acceptCookies = function() {
   if (cookieConsent !== null) return;
