@@ -437,8 +437,13 @@
 
   </main>
 
-  <footer>
-    <p>&copy; 2025 Kırıkkale Üniversitesi Ekonomi Topluluğu | Hazırlayan: Arif Özdemir</p>
-  </footer>
+ <footer>
+  <p>&copy; <span id="current-year"></span> Kırıkkale Üniversitesi Ekonomi Topluluğu | Hazırlayan: Arif Özdemir</p>
+</footer>
+
+<script>
+  document.getElementById("current-year").textContent = new Date().getFullYear();
+</script>
+
 </body>
 </html>
