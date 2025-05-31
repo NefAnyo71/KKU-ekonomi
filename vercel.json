@@ -1,9 +1,18 @@
 {
-    "routes": [
-      {
-        "src": "/js/.*",
-        "dest": "/public/js/",
-        "headers": { "Cache-Control": "public, max-age=3600" }
+  "routes": [
+    {
+      "src": "/js/.*",
+      "dest": "/public/js/",
+      "headers": {
+        "Cache-Control": "public, max-age=3600"
       }
-    ]
-  }
+    },
+    {
+      "src": "/mp3/(.*)",
+      "dest": "/public/mp3/$1",
+      "headers": {
+        "Content-Type": "audio/mpeg"
+      }
+    }
+  ]
+}
