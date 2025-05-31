@@ -2023,33 +2023,9 @@ a:hover {
 
 /*Darth Vader Telefon Uyumluluğu*/
 @media only screen and (max-width: 768px) {
-  .footer_section {
-    position: relative; /* Mutlak konumlanan öğeler için bağlayıcı konteyner */
-    background-color: rgba(0, 0, 0, 0.9);
-    color: #ffffff;
-    padding: 15px 10px;
-  }
-
-  .container {
-    width: 100%;
-  }
-
-  .footer_x {
-    text-align: left;
-    font-size: 0.9rem;
-    line-height: 1.4;
-    width: 100%;
-  }
-
   .vader {
-    position: absolute;
-    top: -20px;         /* Yazının biraz üstüne çıkar */
-    right: 5px;        /* Sağ üst köşeye yaslanır */
-    transform: scale(0.5); /* Mobil için küçültme */
-    z-index: 10;        /* Yazının üstünde görünmesini sağlar */
+    display: none !important;
   }
 }
-
-
 
 /*Darth Vader Telefon Uyumluluğu*/
