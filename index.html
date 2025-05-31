@@ -1111,6 +1111,22 @@ document.head.appendChild(animationStyles);
 <script>
   
 </script>
+<audio id="vaderAudio" src="/KKU-ekonomi/mp3/youwerethechosenone.mp3" preload="auto"></audio>
+<script>
+  const vader = document.querySelector('.vader');
+  const audio = document.getElementById('vaderAudio');
+
+  vader.addEventListener('mouseenter', () => {
+    audio.currentTime = 0; // Baştan başlat
+    audio.play();
+  });
+
+  vader.addEventListener('mouseleave', () => {
+    audio.pause();         // Duraklat
+    audio.currentTime = 0; // Baştan sar
+  });
+</script>
+
 
 </body>
 </html>
