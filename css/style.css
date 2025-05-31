@@ -1305,8 +1305,8 @@ a:hover {
 
 .vader {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 10%;
+  left: 90%;
   display: inline-block;
   -webkit-transform: translate(-50%,-50%);
   transform: translate(-50%,-50%)
@@ -2020,3 +2020,20 @@ a:hover {
   background: #455caa
 }
 /*Darth Vader*/
+
+/*Darth Vader Telefon Uyumluluğu*/
+@media only screen and (max-width: 768px) {
+  .footer_section {
+    background-color: rgba(0, 0, 0, 0.9);
+    color: #ffffff;
+    padding: 15px 10px;
+  }
+
+  .footer_x {
+    text-align: left; /* Yazılar sola hizalanır */
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+}
+
+/*Darth Vader Telefon Uyumluluğu*/
