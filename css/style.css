@@ -2023,17 +2023,13 @@ a:hover {
 
 /*Darth Vader Telefon Uyumluluğu*/
 @media only screen and (max-width: 768px) {
-  .footer_section {
-    background-color: rgba(0, 0, 0, 0.9);
-    color: #ffffff;
-    padding: 15px 10px;
-  }
-
-  .footer_x {
-    text-align: left; /* Yazılar sola hizalanır */
-    font-size: 0.9rem;
-    line-height: 1.4;
+  .vader {
+    top: 5%; /* Daha yukarı alındı */
+    left: 90%;
+    transform: translate(-50%, -50%) scale(0.7); /* İsteğe bağlı: mobilde küçültme */
   }
 }
+
+
 
 /*Darth Vader Telefon Uyumluluğu*/
