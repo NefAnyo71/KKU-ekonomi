@@ -2044,7 +2044,7 @@ a:hover {
   .vader {
     position: absolute;
     top: -20px;         /* Yazının biraz üstüne çıkar */
-    right: 10px;        /* Sağ üst köşeye yaslanır */
+    right: 5px;        /* Sağ üst köşeye yaslanır */
     transform: scale(0.5); /* Mobil için küçültme */
     z-index: 10;        /* Yazının üstünde görünmesini sağlar */
   }
