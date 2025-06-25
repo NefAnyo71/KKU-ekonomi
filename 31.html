@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - KKU-Economics Community</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="assets/favicon.png" type="image/png">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.7;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        header p {
+            font-size: 1.2rem;
+            margin-top: 15px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+
+        main {
+            flex: 1;
+            padding: 20px 0;
+        }
+
+        .policy-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 40px auto;
+            padding: 0 20px;
+            max-width: 960px;
+            gap: 20px;
+        }
+
+        .policy-item {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+
+        .policy-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .policy-title {
+            background-color: #4CAF50;
+            color: white;
+            font-size: 1.4rem;
+            font-weight: 600;
+            padding: 20px 25px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+            transition: background-color 0.3s ease, border-radius 0.3s ease;
+            border-radius: 12px;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            outline: none;
+        }
+
+        .policy-item.active .policy-title {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            background-color: #388E3C;
+        }
+
+        .policy-title:hover {
+            background-color: #45a049;
+        }
+
+        .policy-title::after {
+            content: '+';
+            font-size: 1.8rem;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+
+        .policy-item.active .policy-title::after {
+            content: '-';
+            transform: rotate(0deg);
+        }
+
+        .policy-content {
+            padding: 25px;
+            background-color: #fdfdfd;
+            font-size: 1.05rem;
+            color: #555;
+            display: none;
+            border-top: 1px solid #eee;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .policy-content ul {
+            list-style: disc;
+            padding-left: 25px;
+            margin-top: 15px;
+        }
+
+        .policy-content ul li {
+            margin-bottom: 10px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        footer {
+            background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            margin-top: auto;
+            box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        @media screen and (max-width: 768px) {
+            header h1 {
+                font-size: 2.2rem;
+                letter-spacing: 2px;
+            }
+
+            header p {
+                font-size: 1rem;
+            }
+
+            .policy-title {
+                font-size: 1.2rem;
+                padding: 18px 20px;
+            }
+
+            .policy-content {
+                font-size: 0.95rem;
+                padding: 20px;
+            }
+
+            footer {
+                font-size: 0.85rem;
+                padding: 15px;
+            }
+
+            .policy-container {
+                margin: 20px auto;
+                padding: 0 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Privacy Policy</h1>
+        <p>Application: KKU-Economics Community (com.arifozdemir.ekos) <br>Developer: Arif Özdemir</p>
+    </header>
+
+    <main>
+        <section class="policy-container">
+            <div class="policy-item">
+                <button class="policy-title">1. Information We Collect</button>
+                <div class="policy-content">
+                    <p>The <strong>KKU-Economics Community</strong> application collects certain information to provide and improve the user experience. This information may include:</p>
+                    <ul>
+                        <li><strong>Registration Information:</strong> Personal information you provide when registering for the application, such as your name, surname, student number, and email address.</li>
+                        <li><strong>Device Information:</strong> The type of device you use the application on, operating system, unique device identifiers (e.g., device ID), IP address, and mobile network information. This information is used to ensure the application functions correctly on different devices and to troubleshoot potential errors.</li>
+                        <li><strong>Application Usage Data:</strong> Anonymized or aggregated data such as your activities within the application, pages visited, feature usage, and interaction durations. This data is used to analyze application performance and improve the user experience.</li>
+                        <li><strong>Log Records:</strong> Log information automatically collected related to your interactions with the application's servers (e.g., access dates and times, feature usage, device event information).</li>
+                        <li><strong>Information from Third-Party Services:</strong> If we use third-party services like Firebase, information collected through these services (e.g., application crash reports, analytical data, authentication information).</li>
+                    </ul>
+                    <p>Our application does not request or collect sensitive personal or financial information (e.g., bank account details, credit card numbers, health data).</p>
+                </div>
+            </div>
+
+            <div class="policy-item">
+                <button class="policy-title">2. How We Use Your Information</button>
+                <div class="policy-content">
+                    <p>We use the information we collect for the following purposes:</p>
+                    <ul>
+                        <li><strong>Service Provision and Management:</strong> To ensure smooth functioning of event registrations, sending notifications, and in-app features.</li>
+                        <li><strong>Communication:</strong> To communicate with you regarding event updates, important announcements, or your support requests.</li>
+                        <li><strong>Application Development and Improvement:</strong> To analyze application performance, fix errors, develop new features, and optimize the overall user experience.</li>
+                        <li><strong>Security and Fraud Prevention:</strong> To ensure the security of the application, detect, and prevent unauthorized access or malicious activities.</li>
+                        <li><strong>Legal Obligations:</strong> To comply with applicable laws, regulations, or court orders.</li>
+                    </ul>
+                    <p>Your personal data will not be used for purposes other than those explicitly stated.</p>
+                </div>
+            </div>
+
+            <div class="policy-item">
+                <button class="policy-title">3. Data Retention and Security</button>
+                <div class="policy-content">
+                    <p>We take necessary technical and administrative measures to securely store the data we collect. Your data is hosted on secure and leading cloud platforms like Firebase.</p>
+                    <ul>
+                        <li><strong>Encryption:</strong> Encryption methods may be used during the transmission and storage of sensitive data.</li>
+                        <li><strong>Access Restrictions:</strong> Access to your data is granted only to authorized personnel.</li>
+                        <li><strong>Data Retention Period:</strong> Your data is retained for as long as necessary to provide the service, fulfill legal obligations, or resolve disputes.</li>
+                    </ul>
+                    <p>However, no method of transmission or storage over the internet is 100% secure. Therefore, we cannot guarantee the absolute security of your data, but we use the best possible practices.</p>
+                </div>
+            </div>
+
+            <div class="policy-item">
+                <button class="policy-title">4. Your Rights</button>
+                <div class="policy-content">
+                    <p>You have the following rights regarding your personal data:</p>
+                    <ul>
+                        <li><strong>Right of Access:</strong> To request access to the data we hold about you.</li>
+                        <li><strong>Right to Rectification:</strong> To request correction of inaccurate or incomplete data.</li>
+                        <li><strong>Right to Erasure:</strong> To request the deletion of your data under certain conditions.</li>
+                        <li><strong>Right to Restriction of Processing:</strong> To request restriction of the processing of your data.</li>
+                        <li><strong>Right to Data Portability:</strong> To receive your data in a structured, commonly used, and machine-readable format or to request its transfer to another data controller.</li>
+                        <li><strong>Right to Object:</strong> To object to certain processing activities of your data.</li>
+                    </ul>
+                    <p>If you wish to exercise these rights or have any questions regarding your data privacy, please do not hesitate to contact us using the contact information below.</p>
+                </div>
+            </div>
+
+            <div class="policy-item">
+                <button class="policy-title">5. Third-Party Services</button>
+                <div class="policy-content">
+                    <p>Our application uses third-party services like Google Firebase to provide and improve our services. These services support core functionalities of the application such as authentication, database storage, analytics, and crash reporting.</p>
+                    <ul>
+                        <li><strong>Firebase:</strong> Firebase (provided by Google Inc.) offers authentication, real-time database, storage, and analytics services. Data collected by Firebase (e.g., device identifiers, application usage data) is subject to Google's privacy policies. For more information on Firebase's data usage, please refer to <a href="https://policies.google.com/privacy" target="_blank" style="color: #4CAF50; text-decoration: underline;">Google's privacy policy</a>.</li>
+                    </ul>
+                    <p>These third-party service providers have their own privacy policies and may use your data within the framework of these policies. We recommend that you review these privacy policies.</p>
+                </div>
+            </div>
+
+            <div class="policy-item">
+                <button class="policy-title">6. Changes to This Privacy Policy</button>
+                <div class="policy-content">
+                    <p>We may update this privacy policy from time to time. When we make any changes, we will publish the updated policy on this page and revise the "Last Updated" date. These changes will take effect immediately upon publication. You are advised to review changes to our policy regularly.</p>
+                    <p><strong>Last Updated Date:</strong> June 25, 2025</p>
+                </div>
+            </div>
+
+            <div class="policy-item">
+                <button class="policy-title">7. Contact Us</button>
+                <div class="policy-content">
+                    <p>If you have any questions or concerns about this privacy policy, please do not hesitate to contact us through the following channels:</p>
+                    <p><strong>Email:</strong> <a href="mailto:arifkerem71@gmail.com" style="color: #4CAF50; text-decoration: underline;">arifkerem71@gmail.com</a></p>
+                    <p><strong>Address:</strong> Kırıkkale University Economics Club, Kırıkkale Yahşihan</p>
+                    <p><strong>Website:</strong> <a href="https://kkuekonomi.vercel.app/" target="_blank" style="color: #4CAF50; text-decoration: underline;">https://kkuekonomi.vercel.app/</a></p>
+                </div>
+            </div>
+
+            <div class="policy-item">
+                <button class="policy-title">8. Application Owner and Developer Information</button>
+                <div class="policy-content">
+                    <p>This mobile application is developed and managed by <strong>Arif Özdemir</strong> on behalf of Kırıkkale University Economics Community. The main purpose of the application is to make events and announcements easily accessible to community members and interested parties.</p>
+                    <ul>
+                        <li><strong>Application Owner:</strong> Kırıkkale University Economics Community</li>
+                        <li><strong>Mobil Android App:</strong>KKU-Ekonomi Topluluğu</li>
+                        <li><strong>Developer:</strong> Arif Özdemir</li>
+                        <li><strong>Developer Personal Account :</strong> Nef_Anyo</li>
+                        <li><strong>Support Email:</strong> <a href="mailto:arifkerem71@gmail.com" style="color: #4CAF50; text-decoration: underline;">arifkerem71@gmail.com</a></li>
+                        <li><strong>Official Website:</strong> <a href="https://kkuekonomi.vercel.app/" target="_blank" style="color: #4CAF50; text-decoration: underline;">https://kkuekonomi.vercel.app/</a></li>
+                        <li><strong>Address:</strong> Kırıkkale University Economics Club, Kırıkkale Yahşihan</li>
+                    </ul>
+                    <p>The application is not intended for any commercial purpose and is designed solely for informational and community interaction.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 KKU-Economics Community - Kırıkkale University Economics Club</p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let titles = document.querySelectorAll(".policy-title");
+
+            titles.forEach(title => {
+                title.addEventListener("click", function() {
+                    let activeItem = document.querySelector(".policy-item.active");
+                    if (activeItem && activeItem !== this.closest(".policy-item")) {
+                        activeItem.classList.remove("active");
+                        activeItem.querySelector(".policy-content").style.display = "none";
+                    }
+
+                    let parentItem = this.closest(".policy-item");
+                    let content = this.nextElementSibling;
+
+                    if (content.style.display === "block") {
+                        content.style.display = "none";
+                        parentItem.classList.remove("active");
+                    } else {
+                        content.style.display = "block";
+                        parentItem.classList.add("active");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
