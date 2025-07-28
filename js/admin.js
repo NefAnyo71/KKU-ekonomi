@@ -163,28 +163,16 @@ function loadCredentialsFromCookie() {
     return null;
 }
 
-// Firebase config'den Google Client ID'yi al
+// Google Sign-In'i devre dışı bırak
 async function initializeGoogleSignIn() {
-    try {
-        const response = await fetch(`${PROXY_SERVER_URL}/api/config`);
-        if (response.ok) {
-            const config = await response.json();
-            const firebaseConfig = config.data || config;
-            
-            // Firebase config'den Google Client ID'yi çıkar
-            if (firebaseConfig.messagingSenderId) {
-                GOOGLE_CLIENT_ID = `${firebaseConfig.messagingSenderId}-your-google-client-id.apps.googleusercontent.com`;
-                
-                // Google Sign-In'i başlat
-                const onloadDiv = document.getElementById('g_id_onload');
-                if (onloadDiv) {
-                    onloadDiv.setAttribute('data-client_id', GOOGLE_CLIENT_ID);
-                }
-            }
-        }
-    } catch (error) {
-        console.error('Google Sign-In başlatma hatası:', error);
-    }
+    // Google Sign-In butonunu gizle
+    const googleSignInDiv = document.querySelector('.g_id_signin');
+    const googleOnloadDiv = document.getElementById('g_id_onload');
+    const dividerDiv = document.querySelector('.divider');
+    
+    if (googleSignInDiv) googleSignInDiv.style.display = 'none';
+    if (googleOnloadDiv) googleOnloadDiv.style.display = 'none';
+    if (dividerDiv) dividerDiv.style.display = 'none';
 }
 
 // Sayfa yüklendiğinde çalışacak fonksiyon
@@ -342,7 +330,18 @@ async function loadEvents() {
         let eventsHtml = '';
         querySnapshot.forEach((doc) => {
             const event = doc.data();
-            const eventDate = event.date.toDate();
+            let eventDate;
+            
+            // Tarih formatını kontrol et
+            if (event.date && typeof event.date.toDate === 'function') {
+                eventDate = event.date.toDate();
+            } else if (event.date instanceof Date) {
+                eventDate = event.date;
+            } else if (typeof event.date === 'string') {
+                eventDate = new Date(event.date);
+            } else {
+                eventDate = new Date();
+            }
             
             eventsHtml += `
                 <div class="event-item" data-id="${doc.id}">
@@ -384,7 +383,18 @@ async function editEvent(eventId) {
         }
         
         const event = doc.data();
-        const eventDate = event.date.toDate();
+        let eventDate;
+        
+        // Tarih formatını kontrol et
+        if (event.date && typeof event.date.toDate === 'function') {
+            eventDate = event.date.toDate();
+        } else if (event.date instanceof Date) {
+            eventDate = event.date;
+        } else if (typeof event.date === 'string') {
+            eventDate = new Date(event.date);
+        } else {
+            eventDate = new Date();
+        }
         
         document.getElementById('event-title').value = event.title;
         document.getElementById('event-date').value = eventDate.toISOString().slice(0, 16);
