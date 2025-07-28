@@ -288,14 +288,12 @@ async function handleEventSubmit(e) {
             title,
             date: new Date(date).toString(),
             details,
-            url: url || null,
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            url: url || null
         };
         
         if (editingEventId) {
             await db.collection('etkinlikler').doc(editingEventId).update(eventData);
         } else {
-            eventData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
             await db.collection('etkinlikler').add(eventData);
         }
         
@@ -330,17 +328,24 @@ async function loadEvents() {
             events.push({ id: doc.id, ...doc.data() });
         });
         
-        // Tarihe göre sırala
+        // Tarihe göre sırala (string tarih formatı)
         events.sort((a, b) => {
-            return new Date(b.date) - new Date(a.date);
+            // Eğer timestamp ise toDate() kullan, string ise direkt Date() yap
+            let dateA = a.date && typeof a.date.toDate === 'function' ? a.date.toDate() : new Date(a.date);
+            let dateB = b.date && typeof b.date.toDate === 'function' ? b.date.toDate() : new Date(b.date);
+            return dateB - dateA;
         });
         
         let eventsHtml = '';
         events.forEach((eventData) => {
             let eventDate;
             
-            // String tarih formatını Date'e çevir
-            eventDate = new Date(eventData.date);
+            // Tarih formatını kontrol et (timestamp veya string)
+            if (eventData.date && typeof eventData.date.toDate === 'function') {
+                eventDate = eventData.date.toDate();
+            } else {
+                eventDate = new Date(eventData.date);
+            }
             
             eventsHtml += `
                 <div class="event-item" data-id="${eventData.id}">
@@ -384,8 +389,12 @@ async function editEvent(eventId) {
         const event = doc.data();
         let eventDate;
         
-        // String tarih formatını Date'e çevir
-        eventDate = new Date(event.date);
+        // Tarih formatını kontrol et (timestamp veya string)
+        if (event.date && typeof event.date.toDate === 'function') {
+            eventDate = event.date.toDate();
+        } else {
+            eventDate = new Date(event.date);
+        }
         
         document.getElementById('event-title').value = event.title;
         document.getElementById('event-date').value = eventDate.toISOString().slice(0, 16);
