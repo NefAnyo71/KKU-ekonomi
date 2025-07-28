@@ -6,9 +6,7 @@
     <title>Topluluk Yönetim Paneli</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" href="/images/favicon.png">
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
     <link rel="stylesheet" href="https://kkuekonomi.vercel.app/css/admin.css"">
 </head>
 <body>
@@ -22,9 +20,9 @@
             </div>
             <form id="login-form">
                 <div class="form-group">
-                    <label for="login-email">E-posta Adresi</label>
-                    <input type="email" id="login-email" required placeholder="admin@example.com">
-                    <i class="fas fa-envelope"></i>
+                    <label for="login-username">Kullanıcı Adı</label>
+                    <input type="text" id="login-username" required placeholder="Kullanıcı adınızı girin">
+                    <i class="fas fa-user"></i>
                 </div>
                 <div class="form-group">
                     <label for="login-password">Şifre</label>
@@ -92,7 +90,7 @@
         </div>
     </div>
 
-    <script src="/KKU-ekonomi/js/admin.js"></script>
+    <script src="js/admin.js"></script>
 
 </body>
 
