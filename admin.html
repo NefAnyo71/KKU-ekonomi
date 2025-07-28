@@ -6,10 +6,9 @@
     <title>Topluluk Yönetim Paneli</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" href="/images/favicon.png">
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-    <link rel="stylesheet" href="https://kkuekonomi.vercel.app/css/admin.css"">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link rel="stylesheet" href="https://kkuekonomi.vercel.app/css/admin.css">
+    <link rel="stylesheet" href="css/google-signin.css">
 </head>
 <body>
     <!-- Giriş Ekranı -->
@@ -22,9 +21,9 @@
             </div>
             <form id="login-form">
                 <div class="form-group">
-                    <label for="login-email">E-posta Adresi</label>
-                    <input type="email" id="login-email" required placeholder="admin@example.com">
-                    <i class="fas fa-envelope"></i>
+                    <label for="login-username">Kullanıcı Adı</label>
+                    <input type="text" id="login-username" required placeholder="Kullanıcı adınızı girin">
+                    <i class="fas fa-user"></i>
                 </div>
                 <div class="form-group">
                     <label for="login-password">Şifre</label>
@@ -35,6 +34,25 @@
                     <span id="login-button-text">Giriş Yap</span>
                     <span id="login-button-loading" style="display: none;" class="loading"></span>
                 </button>
+                
+                <div class="divider">
+                    <span>veya</span>
+                </div>
+                
+                <div id="g_id_onload"
+                     data-client_id="83588029480-your-google-client-id.apps.googleusercontent.com"
+                     data-callback="handleCredentialResponse"
+                     data-auto_prompt="false">
+                </div>
+                <div class="g_id_signin"
+                     data-type="standard"
+                     data-size="large"
+                     data-theme="outline"
+                     data-text="sign_in_with"
+                     data-shape="rectangular"
+                     data-logo_alignment="left">
+                </div>
+                
                 <div id="login-error" class="error-message"></div>
             </form>
             <div class="login-footer">
@@ -92,7 +110,7 @@
         </div>
     </div>
 
-    <script src="/KKU-ekonomi/js/admin.js"></script>
+    <script src="js/admin.js"></script>
 
 </body>
 

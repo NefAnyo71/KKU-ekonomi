@@ -1,0 +1,36 @@
+/* Google Sign-In için ek stiller */
+.divider {
+    text-align: center;
+    margin: 20px 0;
+    position: relative;
+}
+
+.divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #e0e0e0;
+}
+
+.divider span {
+    background: white;
+    padding: 0 15px;
+    color: #666;
+    font-size: 14px;
+}
+
+/* Google Sign-In butonunu ortalama */
+.g_id_signin {
+    display: flex !important;
+    justify-content: center !important;
+    margin: 15px 0 !important;
+}
+
+/* Google Sign-In buton stilini özelleştirme */
+.g_id_signin iframe {
+    border-radius: 8px !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}
