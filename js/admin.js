@@ -1,7 +1,9 @@
 // Proxy server URL
 const PROXY_SERVER_URL = 'https://proxyserver-flax.vercel.app';
 
-// Google Client ID (Firebase config'den alınacak)
+// Firebase variables
+let auth;
+let db;
 let GOOGLE_CLIENT_ID = null;
 
 // Yetkili Google hesapları
@@ -33,12 +35,26 @@ function deleteCookie(name) {
     document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;SameSite=Lax;Secure`;
 }
 
-// Kullanıcı bilgilerini çereze kaydet
+// Proxy kullanıcı bilgilerini çereze kaydet
 function saveCredentialsToCookie(username, password, remember) {
     if (remember) {
         const credentials = {
-            type: 'manual',
+            type: 'proxy',
             username: btoa(unescape(encodeURIComponent(username))),
+            password: btoa(unescape(encodeURIComponent(password)))
+        };
+        setCookie('admin_credentials', JSON.stringify(credentials), 30);
+    } else {
+        deleteCookie('admin_credentials');
+    }
+}
+
+// Firebase kullanıcı bilgilerini çereze kaydet
+function saveFirebaseCredentialsToCookie(email, password, remember) {
+    if (remember) {
+        const credentials = {
+            type: 'firebase',
+            email: btoa(unescape(encodeURIComponent(email))),
             password: btoa(unescape(encodeURIComponent(password)))
         };
         setCookie('admin_credentials', JSON.stringify(credentials), 30);
@@ -59,9 +75,15 @@ function loadCredentialsFromCookie() {
                     email: decodeURIComponent(escape(atob(credentials.email))),
                     name: decodeURIComponent(escape(atob(credentials.name)))
                 };
-            } else {
+            } else if (credentials.type === 'firebase') {
                 return {
-                    type: 'manual',
+                    type: 'firebase',
+                    email: decodeURIComponent(escape(atob(credentials.email))),
+                    password: decodeURIComponent(escape(atob(credentials.password)))
+                };
+            } else if (credentials.type === 'proxy') {
+                return {
+                    type: 'proxy',
                     username: decodeURIComponent(escape(atob(credentials.username))),
                     password: decodeURIComponent(escape(atob(credentials.password)))
                 };
@@ -168,21 +190,87 @@ async function initializeGoogleSignIn() {
     }
 }
 
+// Firebase'i başlat
+async function initializeFirebase() {
+    try {
+        const response = await fetch(`${PROXY_SERVER_URL}/api/config`);
+        if (!response.ok) throw new Error('Firebase config alınamadı');
+        
+        const config = await response.json();
+        const firebaseConfig = config.data || config;
+        
+        const app = firebase.initializeApp(firebaseConfig);
+        auth = firebase.auth();
+        db = firebase.firestore();
+        
+        return true;
+    } catch (error) {
+        console.error('Firebase başlatma hatası:', error);
+        return false;
+    }
+}
+
+// Admin kontrolü
+async function checkAdminStatus(uid) {
+    try {
+        const doc = await db.collection('admins').doc(uid).get();
+        return doc.exists;
+    } catch (error) {
+        console.error('Admin kontrol hatası:', error);
+        return false;
+    }
+}
+
+// Firebase ile giriş
+async function loginWithFirebase(email, password) {
+    try {
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+        
+        const isAdmin = await checkAdminStatus(user.uid);
+        if (!isAdmin) {
+            await auth.signOut();
+            throw new Error('Bu hesapla giriş yetkiniz yok');
+        }
+        
+        return { success: true, user };
+    } catch (error) {
+        return { success: false, message: error.message };
+    }
+}
+
 // Sayfa yüklendiğinde çalışacak fonksiyon
 document.addEventListener('DOMContentLoaded', async function() {
+    // Firebase'i başlat
+    const firebaseInitialized = await initializeFirebase();
+    if (!firebaseInitialized) {
+        document.getElementById('login-error').textContent = 'Sistem başlatılamadı.';
+        return;
+    }
+    
     // Google Sign-In'i başlat
     await initializeGoogleSignIn();
+    
+    // Auth state listener
+    auth.onAuthStateChanged(async (user) => {
+        if (user) {
+            const isAdmin = await checkAdminStatus(user.uid);
+            if (isAdmin) {
+                document.getElementById('login-container').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'flex';
+                initializeAdminPanel();
+            } else {
+                await auth.signOut();
+            }
+        }
+    });
     // Çerezden bilgileri yükle
     const credentials = loadCredentialsFromCookie();
     if (credentials) {
-        if (credentials.type === 'google') {
-            // Google ile otomatik giriş
-            document.getElementById('login-container').style.display = 'none';
-            document.getElementById('admin-panel').style.display = 'flex';
-            initializeAdminPanel();
-            return;
-        } else {
-            // Manuel giriş bilgilerini doldur
+        if (credentials.type === 'firebase') {
+            document.getElementById('login-email').value = credentials.email;
+            document.getElementById('login-password').value = credentials.password;
+        } else if (credentials.type === 'proxy') {
             document.getElementById('login-username').value = credentials.username;
             document.getElementById('login-password').value = credentials.password;
         }
@@ -192,38 +280,45 @@ document.addEventListener('DOMContentLoaded', async function() {
     document.getElementById('login-form').addEventListener('submit', async (e) => {
         e.preventDefault();
 
+        const email = document.getElementById('login-email').value;
         const username = document.getElementById('login-username').value;
         const password = document.getElementById('login-password').value;
         const errorElement = document.getElementById('login-error');
         const loginButtonText = document.getElementById('login-button-text');
         const loginButtonLoading = document.getElementById('login-button-loading');
 
-        // Loading durumunu göster
         loginButtonText.style.display = 'none';
         loginButtonLoading.style.display = 'inline-block';
         errorElement.textContent = '';
 
         try {
-            const result = await loginWithProxy(username, password);
-
-            if (result.success) {
-                // Başarılı giriş
-                saveCredentialsToCookie(username, password, true);
-                
-                // Admin panelini göster
-                document.getElementById('login-container').style.display = 'none';
-                document.getElementById('admin-panel').style.display = 'flex';
-                
-                initializeAdminPanel();
-            } else {
-                // Hatalı giriş
+            let result;
+            
+            // Email varsa Firebase ile giriş yap
+            if (email) {
+                result = await loginWithFirebase(email, password);
+                if (result.success) {
+                    saveFirebaseCredentialsToCookie(email, password, true);
+                }
+            } 
+            // Username varsa proxy ile giriş yap
+            else if (username) {
+                result = await loginWithProxy(username, password);
+                if (result.success) {
+                    saveCredentialsToCookie(username, password, true);
+                    document.getElementById('login-container').style.display = 'none';
+                    document.getElementById('admin-panel').style.display = 'flex';
+                    initializeAdminPanel();
+                }
+            }
+            
+            if (!result.success) {
                 errorElement.textContent = result.message;
             }
         } catch (error) {
             errorElement.textContent = 'Beklenmeyen bir hata oluştu.';
             console.error('Giriş hatası:', error);
         } finally {
-            // Loading durumunu gizle
             loginButtonText.style.display = 'inline-block';
             loginButtonLoading.style.display = 'none';
         }
@@ -240,9 +335,18 @@ function initializeAdminPanel() {
 
 // Çıkış butonu işlevselliği
 function initializeLogoutButton() {
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', async function(e) {
         if (e.target.closest('.logout-btn')) {
             e.preventDefault();
+            
+            try {
+                // Firebase'den çıkış yap
+                if (auth && auth.currentUser) {
+                    await auth.signOut();
+                }
+            } catch (error) {
+                console.error('Firebase çıkış hatası:', error);
+            }
             
             // Çerezleri temizle
             deleteCookie('admin_credentials');
