@@ -6,6 +6,15 @@ let auth;
 let db;
 let GOOGLE_CLIENT_ID = null;
 
+// Yetkili Google hesapları
+const AUTHORIZED_EMAILS = [
+    'admin@kkuekonomi.com',
+    'yonetim@kkuekonomi.com'
+];
+
+// Etkinlik yönetimi değişkenleri
+let editingEventId = null;
+
 // Çerez işlemleri için yardımcı fonksiyonlar
 function setCookie(name, value, days) {
     const expires = new Date();
@@ -261,6 +270,160 @@ document.addEventListener('DOMContentLoaded', async function() {
 // Admin panel fonksiyonlarını başlat
 function initializeAdminPanel() {
     console.log('Admin paneli başlatıldı');
+    initializeEventManagement();
+}
+
+// Etkinlik yönetimi başlatma
+function initializeEventManagement() {
+    document.getElementById('event-form').addEventListener('submit', handleEventSubmit);
+    document.getElementById('cancel-event-btn').addEventListener('click', cancelEventEdit);
+    loadEvents();
+}
+
+// Etkinlik kaydetme/güncelleme
+async function handleEventSubmit(e) {
+    e.preventDefault();
+    
+    const title = document.getElementById('event-title').value;
+    const date = document.getElementById('event-date').value;
+    const details = document.getElementById('event-details').value;
+    const url = document.getElementById('event-url').value;
+    
+    const saveBtn = document.getElementById('save-event-text');
+    const saveLoading = document.getElementById('save-event-loading');
+    
+    saveBtn.style.display = 'none';
+    saveLoading.style.display = 'inline-block';
+    
+    try {
+        const eventData = {
+            title,
+            date: new Date(date),
+            details,
+            url: url || null,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        
+        if (editingEventId) {
+            await db.collection('etkinlikler').doc(editingEventId).update(eventData);
+        } else {
+            eventData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+            await db.collection('etkinlikler').add(eventData);
+        }
+        
+        document.getElementById('event-form').reset();
+        cancelEventEdit();
+        loadEvents();
+        
+    } catch (error) {
+        console.error('Etkinlik kaydetme hatası:', error);
+        alert('Etkinlik kaydedilirken hata oluştu!');
+    } finally {
+        saveBtn.style.display = 'inline-block';
+        saveLoading.style.display = 'none';
+    }
+}
+
+// Etkinlikleri yükle
+async function loadEvents() {
+    const container = document.getElementById('events-container');
+    container.innerHTML = '<div class="loading-message">Etkinlikler yükleniyor...</div>';
+    
+    try {
+        const querySnapshot = await db.collection('etkinlikler')
+            .orderBy('date', 'desc')
+            .get();
+        
+        if (querySnapshot.empty) {
+            container.innerHTML = '<div class="no-events">Henüz etkinlik eklenmemiş.</div>';
+            return;
+        }
+        
+        let eventsHtml = '';
+        querySnapshot.forEach((doc) => {
+            const event = doc.data();
+            const eventDate = event.date.toDate();
+            
+            eventsHtml += `
+                <div class="event-item" data-id="${doc.id}">
+                    <div class="event-header">
+                        <h4>${event.title}</h4>
+                        <div class="event-actions">
+                            <button class="btn-edit" onclick="editEvent('${doc.id}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-delete" onclick="deleteEvent('${doc.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="event-date">
+                        <i class="fas fa-calendar"></i> ${eventDate.toLocaleDateString('tr-TR')} ${eventDate.toLocaleTimeString('tr-TR', {hour: '2-digit', minute: '2-digit'})}
+                    </div>
+                    <div class="event-details">${event.details}</div>
+                    ${event.url ? `<div class="event-url"><a href="${event.url}" target="_blank"><i class="fas fa-link"></i> Bağlantı</a></div>` : ''}
+                </div>
+            `;
+        });
+        
+        container.innerHTML = eventsHtml;
+        
+    } catch (error) {
+        console.error('Etkinlik yükleme hatası:', error);
+        container.innerHTML = '<div class="error-message">Etkinlikler yüklenirken hata oluştu.</div>';
+    }
+}
+
+// Etkinlik düzenleme
+async function editEvent(eventId) {
+    try {
+        const doc = await db.collection('etkinlikler').doc(eventId).get();
+        if (!doc.exists) {
+            alert('Etkinlik bulunamadı!');
+            return;
+        }
+        
+        const event = doc.data();
+        const eventDate = event.date.toDate();
+        
+        document.getElementById('event-title').value = event.title;
+        document.getElementById('event-date').value = eventDate.toISOString().slice(0, 16);
+        document.getElementById('event-details').value = event.details;
+        document.getElementById('event-url').value = event.url || '';
+        
+        editingEventId = eventId;
+        document.getElementById('save-event-text').textContent = 'Etkinlik Güncelle';
+        document.getElementById('cancel-event-btn').style.display = 'inline-block';
+        
+        document.getElementById('event-form').scrollIntoView({ behavior: 'smooth' });
+        
+    } catch (error) {
+        console.error('Etkinlik düzenleme hatası:', error);
+        alert('Etkinlik yüklenirken hata oluştu!');
+    }
+}
+
+// Etkinlik silme
+async function deleteEvent(eventId) {
+    if (!confirm('Bu etkinliği silmek istediğinizden emin misiniz?')) {
+        return;
+    }
+    
+    try {
+        await db.collection('etkinlikler').doc(eventId).delete();
+        loadEvents();
+    } catch (error) {
+        console.error('Etkinlik silme hatası:', error);
+        alert('Etkinlik silinirken hata oluştu!');
+    }
+}
+
+// Düzenleme iptal
+function cancelEventEdit() {
+    editingEventId = null;
+    document.getElementById('save-event-text').textContent = 'Etkinlik Kaydet';
+    document.getElementById('cancel-event-btn').style.display = 'none';
+    document.getElementById('event-form').reset();
 }
 
 // Çıkış butonu işlevselliği
