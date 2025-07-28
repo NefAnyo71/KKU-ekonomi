@@ -6,13 +6,6 @@ let auth;
 let db;
 let GOOGLE_CLIENT_ID = null;
 
-// Yetkili Google hesapları
-const AUTHORIZED_EMAILS = [
-    'admin@kkuekonomi.com',
-    'yonetim@kkuekonomi.com',
-    // Buraya yetkili email adreslerini ekleyin
-];
-
 // Çerez işlemleri için yardımcı fonksiyonlar
 function setCookie(name, value, days) {
     const expires = new Date();
