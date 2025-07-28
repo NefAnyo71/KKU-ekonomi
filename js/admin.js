@@ -286,7 +286,7 @@ async function handleEventSubmit(e) {
     try {
         const eventData = {
             title,
-            date: new Date(date),
+            date: new Date(date).toString(),
             details,
             url: url || null,
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -318,40 +318,39 @@ async function loadEvents() {
     container.innerHTML = '<div class="loading-message">Etkinlikler yükleniyor...</div>';
     
     try {
-        const querySnapshot = await db.collection('etkinlikler')
-            .orderBy('date', 'desc')
-            .get();
+        const querySnapshot = await db.collection('etkinlikler').get();
         
         if (querySnapshot.empty) {
             container.innerHTML = '<div class="no-events">Henüz etkinlik eklenmemiş.</div>';
             return;
         }
         
-        let eventsHtml = '';
+        let events = [];
         querySnapshot.forEach((doc) => {
-            const event = doc.data();
+            events.push({ id: doc.id, ...doc.data() });
+        });
+        
+        // Tarihe göre sırala
+        events.sort((a, b) => {
+            return new Date(b.date) - new Date(a.date);
+        });
+        
+        let eventsHtml = '';
+        events.forEach((eventData) => {
             let eventDate;
             
-            // Tarih formatını kontrol et
-            if (event.date && typeof event.date.toDate === 'function') {
-                eventDate = event.date.toDate();
-            } else if (event.date instanceof Date) {
-                eventDate = event.date;
-            } else if (typeof event.date === 'string') {
-                eventDate = new Date(event.date);
-            } else {
-                eventDate = new Date();
-            }
+            // String tarih formatını Date'e çevir
+            eventDate = new Date(eventData.date);
             
             eventsHtml += `
-                <div class="event-item" data-id="${doc.id}">
+                <div class="event-item" data-id="${eventData.id}">
                     <div class="event-header">
-                        <h4>${event.title}</h4>
+                        <h4>${eventData.title}</h4>
                         <div class="event-actions">
-                            <button class="btn-edit" onclick="editEvent('${doc.id}')">
+                            <button class="btn-edit" onclick="editEvent('${eventData.id}')">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="btn-delete" onclick="deleteEvent('${doc.id}')">
+                            <button class="btn-delete" onclick="deleteEvent('${eventData.id}')">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
@@ -359,8 +358,8 @@ async function loadEvents() {
                     <div class="event-date">
                         <i class="fas fa-calendar"></i> ${eventDate.toLocaleDateString('tr-TR')} ${eventDate.toLocaleTimeString('tr-TR', {hour: '2-digit', minute: '2-digit'})}
                     </div>
-                    <div class="event-details">${event.details}</div>
-                    ${event.url ? `<div class="event-url"><a href="${event.url}" target="_blank"><i class="fas fa-link"></i> Bağlantı</a></div>` : ''}
+                    <div class="event-details">${eventData.details}</div>
+                    ${eventData.url ? `<div class="event-url"><a href="${eventData.url}" target="_blank"><i class="fas fa-link"></i> Bağlantı</a></div>` : ''}
                 </div>
             `;
         });
@@ -385,16 +384,8 @@ async function editEvent(eventId) {
         const event = doc.data();
         let eventDate;
         
-        // Tarih formatını kontrol et
-        if (event.date && typeof event.date.toDate === 'function') {
-            eventDate = event.date.toDate();
-        } else if (event.date instanceof Date) {
-            eventDate = event.date;
-        } else if (typeof event.date === 'string') {
-            eventDate = new Date(event.date);
-        } else {
-            eventDate = new Date();
-        }
+        // String tarih formatını Date'e çevir
+        eventDate = new Date(event.date);
         
         document.getElementById('event-title').value = event.title;
         document.getElementById('event-date').value = eventDate.toISOString().slice(0, 16);
