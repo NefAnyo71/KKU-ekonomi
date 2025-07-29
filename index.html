@@ -1007,7 +1007,7 @@ function getCookie(name) {
   }
 }
 
-// Sayfa yüklendiğinde kullanıcı çerez tercihine göre davran
+// Sayfa yüklendiğinde çerez kontrolü
 window.addEventListener('load', () => {
   console.log('Sayfa yüklendi, çerez kontrolü yapılıyor...');
   
@@ -1017,27 +1017,27 @@ window.addEventListener('load', () => {
   console.log('Bulunan çerez değeri:', storedConsent);
 
   if (storedConsent === 'accepted') {
-    console.log('Çerezler daha önce kabul edilmiş');
+    console.log('Çerezler daha önce kabul edilmiş - sessiz çalışıyor');
     cookieConsent = true;
     if (banner) banner.style.display = 'none';
     startTracking();
   } else if (storedConsent === 'rejected') {
-    console.log('Çerezler daha önce reddedilmiş');
+    console.log('Çerezler daha önce reddedilmiş - sessiz çalışıyor');
     cookieConsent = false;
     if (banner) banner.style.display = 'none';
     trackMinimalSession();
+  } else if (storedConsent === 'auto_accepted') {
+    console.log('Çerezler otomatik kabul edilmiş - sessiz çalışıyor');
+    cookieConsent = true;
+    if (banner) banner.style.display = 'none';
+    startTracking();
   } else {
-    console.log('Çerez tercihi bulunamadı, banner gösteriliyor');
-    cookieConsent = null;
-    if (banner) banner.style.display = 'block';
-
-    // 30 saniye sonra otomatik reddet
-    setTimeout(() => {
-      if (cookieConsent === null) {
-        console.log("Kullanıcı 30 saniyede seçim yapmadı, otomatik reddedildi.");
-        rejectAllCookies();
-      }
-    }, 30000);
+    console.log('İlk ziyaret - çerezler otomatik kabul ediliyor');
+    // İlk ziyarette otomatik kabul et ve banner gösterme
+    cookieConsent = true;
+    setCookie('cookieConsent', 'auto_accepted', 365);
+    if (banner) banner.style.display = 'none';
+    startTracking();
   }
 });
 
@@ -1064,9 +1064,9 @@ function rejectCookies() {
 
 // Gelişmiş Çerez Yönetim Fonksiyonları
 
-// Tüm çerezleri kabul et
+// Tüm çerezleri kabul et (manuel)
 function acceptAllCookies() {
-  console.log('Tüm çerezler kabul ediliyor...');
+  console.log('Tüm çerezler manuel olarak kabul ediliyor...');
   
   const preferences = {
     essential: true,
@@ -1081,14 +1081,12 @@ function acceptAllCookies() {
   const banner = document.getElementById('cookieConsent');
   if (banner) banner.style.display = 'none';
   
-  console.log('Tüm çerezler kabul edildi:', preferences);
+  console.log('Tüm çerezler manuel kabul edildi:', preferences);
   startTracking();
 }
 
 // Özel çerez seçimlerini kaydet
 function saveCustomCookies() {
-  if (cookieConsent !== null) return;
-  
   const preferences = {
     essential: true,
     analytics: document.getElementById('analytics').checked,
