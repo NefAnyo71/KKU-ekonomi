@@ -949,9 +949,27 @@ async function trackMinimalSession() {
   }
 }
 
+// Çerez yardımcı fonksiyonları
+function setCookie(name, value, days) {
+  const expires = new Date();
+  expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+  document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
+}
+
+function getCookie(name) {
+  const nameEQ = name + "=";
+  const ca = document.cookie.split(';');
+  for(let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+  }
+  return null;
+}
+
 // Sayfa yüklendiğinde kullanıcı çerez tercihine göre davran
 window.addEventListener('load', () => {
-  const storedConsent = localStorage.getItem('cookieConsent');
+  const storedConsent = getCookie('cookieConsent');
   const banner = document.getElementById('cookieConsent');
 
   if (storedConsent === 'accepted') {
@@ -979,7 +997,7 @@ window.addEventListener('load', () => {
 function acceptCookies() {
   if (cookieConsent !== null) return;
   cookieConsent = true;
-  localStorage.setItem('cookieConsent', 'true');
+  setCookie('cookieConsent', 'accepted', 365);
   const banner = document.getElementById('cookieBanner');
   if (banner) banner.style.display = 'none';
   startTracking();
@@ -989,7 +1007,7 @@ function acceptCookies() {
 function rejectCookies() {
   if (cookieConsent !== null) return;
   cookieConsent = false;
-  localStorage.setItem('cookieConsent', 'false');
+  setCookie('cookieConsent', 'rejected', 365);
   const banner = document.getElementById('cookieBanner');
   if (banner) banner.style.display = 'none';
   console.log("Kullanıcı çerezleri reddetti, sadece IP verisi toplanıyor.");
@@ -1009,8 +1027,8 @@ function acceptAllCookies() {
   };
   
   cookieConsent = true;
-  localStorage.setItem('cookieConsent', 'accepted');
-  localStorage.setItem('cookiePreferences', JSON.stringify(preferences));
+  setCookie('cookieConsent', 'accepted', 365);
+  setCookie('cookiePreferences', JSON.stringify(preferences), 365);
   
   const banner = document.getElementById('cookieConsent');
   if (banner) banner.style.display = 'none';
@@ -1030,8 +1048,8 @@ function saveCustomCookies() {
   };
   
   cookieConsent = true;
-  localStorage.setItem('cookieConsent', 'accepted');
-  localStorage.setItem('cookiePreferences', JSON.stringify(preferences));
+  setCookie('cookieConsent', 'accepted', 365);
+  setCookie('cookiePreferences', JSON.stringify(preferences), 365);
   
   const banner = document.getElementById('cookieConsent');
   if (banner) banner.style.display = 'none';
@@ -1056,8 +1074,8 @@ function rejectAllCookies() {
   };
   
   cookieConsent = false;
-  localStorage.setItem('cookieConsent', 'rejected');
-  localStorage.setItem('cookiePreferences', JSON.stringify(preferences));
+  setCookie('cookieConsent', 'rejected', 365);
+  setCookie('cookiePreferences', JSON.stringify(preferences), 365);
   
   const banner = document.getElementById('cookieConsent');
   if (banner) banner.style.display = 'none';
