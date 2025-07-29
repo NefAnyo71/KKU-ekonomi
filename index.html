@@ -949,47 +949,95 @@ async function trackMinimalSession() {
   }
 }
 
-// Çerez yardımcı fonksiyonları
+// Güçlendirilmiş çerez yardımcı fonksiyonları
 function setCookie(name, value, days) {
-  const expires = new Date();
-  expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
-  document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
+  try {
+    const expires = new Date();
+    expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+    const cookieString = `${name}=${encodeURIComponent(value)};expires=${expires.toUTCString()};path=/;domain=${window.location.hostname};SameSite=Lax`;
+    document.cookie = cookieString;
+    
+    // Yedek olarak sessionStorage'a da kaydet
+    if (typeof(Storage) !== "undefined") {
+      sessionStorage.setItem(name + '_backup', value);
+      localStorage.setItem(name + '_backup', value);
+    }
+    
+    console.log('Çerez kaydedildi:', name, value);
+  } catch (error) {
+    console.error('Çerez kaydetme hatası:', error);
+  }
 }
 
 function getCookie(name) {
-  const nameEQ = name + "=";
-  const ca = document.cookie.split(';');
-  for(let i = 0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+  try {
+    // Önce çerezlerden dene
+    const nameEQ = name + "=";
+    const ca = document.cookie.split(';');
+    for(let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+      if (c.indexOf(nameEQ) === 0) {
+        const value = decodeURIComponent(c.substring(nameEQ.length, c.length));
+        console.log('Çerez okundu:', name, value);
+        return value;
+      }
+    }
+    
+    // Çerez bulunamazsa yedeklerden dene
+    if (typeof(Storage) !== "undefined") {
+      const localValue = localStorage.getItem(name + '_backup');
+      const sessionValue = sessionStorage.getItem(name + '_backup');
+      
+      if (localValue) {
+        console.log('LocalStorage\'dan okundu:', name, localValue);
+        return localValue;
+      }
+      if (sessionValue) {
+        console.log('SessionStorage\'dan okundu:', name, sessionValue);
+        return sessionValue;
+      }
+    }
+    
+    console.log('Çerez bulunamadı:', name);
+    return null;
+  } catch (error) {
+    console.error('Çerez okuma hatası:', error);
+    return null;
   }
-  return null;
 }
 
 // Sayfa yüklendiğinde kullanıcı çerez tercihine göre davran
 window.addEventListener('load', () => {
+  console.log('Sayfa yüklendi, çerez kontrolü yapılıyor...');
+  
   const storedConsent = getCookie('cookieConsent');
   const banner = document.getElementById('cookieConsent');
+  
+  console.log('Bulunan çerez değeri:', storedConsent);
 
   if (storedConsent === 'accepted') {
+    console.log('Çerezler daha önce kabul edilmiş');
     cookieConsent = true;
     if (banner) banner.style.display = 'none';
     startTracking();
   } else if (storedConsent === 'rejected') {
+    console.log('Çerezler daha önce reddedilmiş');
     cookieConsent = false;
     if (banner) banner.style.display = 'none';
     trackMinimalSession();
   } else {
+    console.log('Çerez tercihi bulunamadı, banner gösteriliyor');
     cookieConsent = null;
     if (banner) banner.style.display = 'block';
 
+    // 30 saniye sonra otomatik reddet
     setTimeout(() => {
       if (cookieConsent === null) {
-        console.log("Kullanıcı seçim yapmadı, otomatik reddedildi.");
+        console.log("Kullanıcı 30 saniyede seçim yapmadı, otomatik reddedildi.");
         rejectAllCookies();
       }
-    }, 15000);
+    }, 30000);
   }
 });
 
@@ -1018,7 +1066,7 @@ function rejectCookies() {
 
 // Tüm çerezleri kabul et
 function acceptAllCookies() {
-  if (cookieConsent !== null) return;
+  console.log('Tüm çerezler kabul ediliyor...');
   
   const preferences = {
     essential: true,
@@ -1065,7 +1113,7 @@ function saveCustomCookies() {
 
 // Tüm çerezleri reddet
 function rejectAllCookies() {
-  if (cookieConsent !== null) return;
+  console.log('Tüm çerezler reddediliyor...');
   
   const preferences = {
     essential: true,
