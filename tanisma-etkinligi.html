@@ -208,6 +208,60 @@
         font-size: 1.8rem;
       }
     }
+
+    .payment-details {
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 10px;
+      padding: 25px;
+      margin-top: 25px;
+      text-align: left;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .payment-details h3 {
+      color: #ffcc00;
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding-bottom: 15px;
+    }
+
+    .payment-details p {
+      color: #eee;
+      margin-bottom: 15px;
+      font-size: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .payment-details p strong {
+      color: #ccc;
+      min-width: 120px;
+    }
+
+    .payment-details .iban-container {
+      display: flex;
+      align-items: center;
+      background: rgba(0,0,0,0.3);
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-top: 5px;
+    }
+
+    .payment-details .iban-container span {
+      flex-grow: 1;
+    }
+
+    .payment-details .copy-btn {
+      background: none;
+      border: none;
+      color: #ffcc00;
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
   </style>
 </head>
 <body>
@@ -249,9 +303,14 @@
       <div class="payment-details">
         <h3>Ödeme Bilgileri</h3>
         <p><strong>Etkinlik Ücreti:</strong> 300 TL</p>
-        <p><strong>Alıcı Adı:</strong> Yiğit Kaptanoğlu</p>
-        <p><strong>IBAN:</strong> TR79 0001 0090 1023 7441 8050 02</p>
-        <p><strong>Önemli:</strong> Lütfen havale/EFT yaparken açıklama kısmına <strong>Adınızı ve Soyadınızı</strong> yazmayı unutmayın.</p>
+        <p><strong>Alıcı Adı:</strong> <span>Yiğit Kaptanoğlu</span></p>
+        <p><strong>IBAN:</strong> 
+          <div class="iban-container">
+            <span id="iban-text">TR79 0001 0090 1023 7441 8050 02</span>
+            <button class="copy-btn" onclick="copyIBAN()"><i class="far fa-copy"></i></button>
+          </div>
+        </p>
+        <p style="color: #ff4d4d; margin-top: 20px; font-weight: bold;"><i class="fas fa-exclamation-triangle"></i> Önemli: Açıklama kısmına Adınızı ve Soyadınızı yazmayı unutmayın.</p>
       </div>
       <a href="index.html" class="btn-back">Ana Sayfaya Dön</a>
     </div>
@@ -276,6 +335,21 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
 
+  <script>
+    function copyIBAN() {
+      const ibanText = document.getElementById('iban-text').innerText;
+      navigator.clipboard.writeText(ibanText).then(() => {
+        const copyBtn = document.querySelector('.copy-btn');
+        const originalIcon = copyBtn.innerHTML;
+        copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+        setTimeout(() => {
+          copyBtn.innerHTML = originalIcon;
+        }, 2000);
+      }).catch(err => {
+        console.error('IBAN kopyalanamadı: ', err);
+      });
+    }
+  </script>
   <script type="module">
     // --- Çerez (Cookie) Yardımcı Fonksiyonları ---
     function setCookie(name, value, days) {
