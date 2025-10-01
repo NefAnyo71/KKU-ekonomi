@@ -89,7 +89,13 @@
                   <a class="nav-link" href="events.html">Etkinlikler</a>
                 </li>
                 <li class="nav-item">
+                  <a class="nav-link" href="tanisma-etkinligi.html">Tanışma Etkinliği Başvurusu</a>
+                </li>
+                <li class="nav-item">
                   <a class="nav-link" href="team.html">Yönetim Kurulu</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="sponsor.html">Sponsorlarımız</a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link" href="blog.html">Blog</a>
@@ -666,135 +672,8 @@
   </div>
 </div>
 -->
-  <!-- Gelişmiş Çerez Yönetim Sistemi -->
-  <div id="cookieConsent" style="
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: linear-gradient(135deg, #2c3e50, #34495e);
-    color: white;
-    padding: 25px;
-    border-radius: 15px;
-    max-width: 600px;
-    width: 95%;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    font-family: 'Poppins', sans-serif;
-    animation: fadeInUp 0.6s ease-out;
-  ">
-    <div class="cookie-header" style="text-align: center; margin-bottom: 20px;">
-      <h3 style="margin: 0 0 10px 0; color: #ffcc00; font-size: 1.3rem;"> Çerez Politikası</h3>
-      <p style="margin: 0; font-size: 0.95rem; line-height: 1.5; color: #ecf0f1;">
-        Web sitemizde deneyiminizi geliştirmek için çeşitli türde çerezler kullanıyoruz. 
-        Aşağıdan çerez tercihlerinizi yönetebilirsiniz.
-      </p>
-    </div>
 
-    <div class="cookie-categories" style="margin-bottom: 20px;">
-      <!-- Zorunlu Çerezler -->
-      <div class="cookie-category" style="margin-bottom: 15px; padding: 12px; background: rgba(255, 255, 255, 0.1); border-radius: 8px;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div>
-            <strong style="color: #ffcc00; font-size: 0.9rem;">Zorunlu Çerezler</strong>
-            <p style="margin: 5px 0 0 0; font-size: 0.8rem; color: #bdc3c7;">
-              Sitenin temel işlevleri için gereklidir. Devre dışı bırakılamaz.
-            </p>
-          </div>
-          <input type="checkbox" id="essential" checked disabled style="margin-left: 10px; transform: scale(1.2);">
-        </div>
-      </div>
 
-      <!-- İstatistik Çerezleri -->
-      <div class="cookie-category" style="margin-bottom: 15px; padding: 12px; background: rgba(255, 255, 255, 0.1); border-radius: 8px;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div>
-            <strong style="color: #ffcc00; font-size: 0.9rem;">İstatistik Çerezleri</strong>
-            <p style="margin: 5px 0 0 0; font-size: 0.8rem; color: #bdc3c7;">
-              Site kullanımını analiz etmek ve performansı artırmak için kullanılır.
-            </p>
-          </div>
-          <input type="checkbox" id="analytics" checked style="margin-left: 10px; transform: scale(1.2);">
-        </div>
-      </div>
-
-      <!-- Sponsorlar İçin Pazarlama Çerezleri -->
-      <div class="cookie-category" style="margin-bottom: 15px; padding: 12px; background: rgba(255, 255, 255, 0.1); border-radius: 8px;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div>
-            <strong style="color: #ffcc00; font-size: 0.9rem;">Sponsorlar Çerezi</strong>
-            <p style="margin: 5px 0 0 0; font-size: 0.8rem; color: #bdc3c7;">
-              Sponsorlarımız için veri topluyoruz ve bunları analiz ediyoruz.
-            </p>
-          </div>
-          <input type="checkbox" id="marketing" style="margin-left: 10px; transform: scale(1.2);">
-        </div>
-      </div>
-    </div>
-
-    <div style="text-align: center; margin-bottom: 15px;">
-      <a href="#" onclick="showCookieDetails()" style="color: #ffcc00; text-decoration: underline; font-size: 0.9rem;">
-        Detaylı Çerez Bilgileri
-      </a> | 
-      <a href="https://kkuekonomi.vercel.app/gizlilik-politikasi.html" target="_blank" style="color: #ffcc00; text-decoration: underline; font-size: 0.9rem;">
-        Gizlilik Politikası
-      </a>
-    </div>
-
-    <div class="cookie-buttons" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-      <button onclick="acceptAllCookies()" style="
-        padding: 12px 20px;
-        background: #27ae60;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 0.9rem;
-        transition: all 0.3s;
-        min-width: 120px;
-      " onmouseover="this.style.background='#229954'" onmouseout="this.style.background='#27ae60'">
-        Tümünü Kabul Et
-      </button>
-      
-      <button onclick="saveCustomCookies()" style="
-        padding: 12px 20px;
-        background: #ffcc00;
-        color: #000;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 0.9rem;
-        transition: all 0.3s;
-        min-width: 120px;
-      " onmouseover="this.style.background='#e6b800'" onmouseout="this.style.background='#ffcc00'">
-        Seçimimi Kaydet
-      </button>
-      
-      <button onclick="rejectAllCookies()" style="
-        padding: 12px 20px;
-        background: #e74c3c;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 0.9rem;
-        transition: all 0.3s;
-        min-width: 120px;
-      " onmouseover="this.style.background='#c0392b'" onmouseout="this.style.background='#e74c3c'">
-        Tümünü Reddet
-      </button>
-    </div>
-
-    <div style="text-align: center; margin-top: 15px;">
-      <small style="color: #95a5a6; font-size: 0.75rem;">
-        Bu tercihlerinizi istediğiniz zaman değiştirebilirsiniz.
-      </small>
-    </div>
-  </div>
-</div>
 
 <style>
 @keyframes fadeInUp {
@@ -870,7 +749,6 @@ async function fetchFirebaseConfig() {
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
 
-let cookieConsent = null;
 const startTime = new Date();
 const sessionId = Math.random().toString(36).substr(2, 9);
 let sessionRef = null;
@@ -887,8 +765,8 @@ async function getIpAddress() {
   }
 }
 
-// Kullanıcı çerezleri kabul ettiğinde detaylı takip başlat
-async function startTracking() {
+// Oturum takip fonksiyonu
+async function trackSession() {
   const ipAddress = await getIpAddress();
 
   try {
@@ -898,8 +776,7 @@ async function startTracking() {
       userAgent: navigator.userAgent,
       page: window.location.pathname,
       ipAddress: ipAddress,
-      exited: false,
-      consent: true
+      exited: false
     });
 
     window.addEventListener("beforeunload", async () => {
@@ -917,308 +794,12 @@ async function startTracking() {
       }
     });
   } catch (error) {
-    console.error("Detaylı oturum kaydı başarısız:", error);
+    console.error("Oturum kaydı başarısız:", error);
   }
 }
 
-// Kullanıcı çerezleri reddettiğinde minimal takip başlat
-async function trackMinimalSession() {
-  const ipAddress = await getIpAddress();
-
-  try {
-    sessionRef = await addDoc(collection(db, "siteSessions"), {
-      sessionId: sessionId,
-      startTime: serverTimestamp(),
-      ipAddress: ipAddress,
-      consent: false,
-      exited: false
-    });
-
-    window.addEventListener("beforeunload", async () => {
-      try {
-        await updateDoc(sessionRef, {
-          endTime: serverTimestamp(),
-          exited: true
-        });
-      } catch (error) {
-        console.error("Minimal çıkış güncellenemedi:", error);
-      }
-    });
-  } catch (error) {
-    console.error("Minimal oturum kaydı başarısız:", error);
-  }
-}
-
-// Güçlendirilmiş çerez yardımcı fonksiyonları
-function setCookie(name, value, days) {
-  try {
-    const expires = new Date();
-    expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
-    const cookieString = `${name}=${encodeURIComponent(value)};expires=${expires.toUTCString()};path=/;domain=${window.location.hostname};SameSite=Lax`;
-    document.cookie = cookieString;
-    
-    // Yedek olarak sessionStorage'a da kaydet
-    if (typeof(Storage) !== "undefined") {
-      sessionStorage.setItem(name + '_backup', value);
-      localStorage.setItem(name + '_backup', value);
-    }
-    
-    console.log('Çerez kaydedildi:', name, value);
-  } catch (error) {
-    console.error('Çerez kaydetme hatası:', error);
-  }
-}
-
-function getCookie(name) {
-  try {
-    // Önce çerezlerden dene
-    const nameEQ = name + "=";
-    const ca = document.cookie.split(';');
-    for(let i = 0; i < ca.length; i++) {
-      let c = ca[i];
-      while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-      if (c.indexOf(nameEQ) === 0) {
-        const value = decodeURIComponent(c.substring(nameEQ.length, c.length));
-        console.log('Çerez okundu:', name, value);
-        return value;
-      }
-    }
-    
-    // Çerez bulunamazsa yedeklerden dene
-    if (typeof(Storage) !== "undefined") {
-      const localValue = localStorage.getItem(name + '_backup');
-      const sessionValue = sessionStorage.getItem(name + '_backup');
-      
-      if (localValue) {
-        console.log('LocalStorage\'dan okundu:', name, localValue);
-        return localValue;
-      }
-      if (sessionValue) {
-        console.log('SessionStorage\'dan okundu:', name, sessionValue);
-        return sessionValue;
-      }
-    }
-    
-    console.log('Çerez bulunamadı:', name);
-    return null;
-  } catch (error) {
-    console.error('Çerez okuma hatası:', error);
-    return null;
-  }
-}
-
-// Sayfa yüklendiğinde çerez kontrolü
-window.addEventListener('load', () => {
-  console.log('Sayfa yüklendi, çerez kontrolü yapılıyor...');
-  
-  const storedConsent = getCookie('cookieConsent');
-  const banner = document.getElementById('cookieConsent');
-  
-  console.log('Bulunan çerez değeri:', storedConsent);
-
-  if (storedConsent === 'accepted') {
-    console.log('Çerezler daha önce kabul edilmiş - sessiz çalışıyor');
-    cookieConsent = true;
-    if (banner) banner.style.display = 'none';
-    startTracking();
-  } else if (storedConsent === 'rejected') {
-    console.log('Çerezler daha önce reddedilmiş - sessiz çalışıyor');
-    cookieConsent = false;
-    if (banner) banner.style.display = 'none';
-    trackMinimalSession();
-  } else if (storedConsent === 'auto_accepted') {
-    console.log('Çerezler otomatik kabul edilmiş - sessiz çalışıyor');
-    cookieConsent = true;
-    if (banner) banner.style.display = 'none';
-    startTracking();
-  } else {
-    console.log('İlk ziyaret - çerezler otomatik kabul ediliyor');
-    // İlk ziyarette otomatik kabul et ve banner gösterme
-    cookieConsent = true;
-    setCookie('cookieConsent', 'auto_accepted', 365);
-    if (banner) banner.style.display = 'none';
-    startTracking();
-  }
-});
-
-// Çerez kabul etme fonksiyonu
-function acceptCookies() {
-  if (cookieConsent !== null) return;
-  cookieConsent = true;
-  setCookie('cookieConsent', 'accepted', 365);
-  const banner = document.getElementById('cookieBanner');
-  if (banner) banner.style.display = 'none';
-  startTracking();
-}
-
-// Çerez reddetme fonksiyonu
-function rejectCookies() {
-  if (cookieConsent !== null) return;
-  cookieConsent = false;
-  setCookie('cookieConsent', 'rejected', 365);
-  const banner = document.getElementById('cookieBanner');
-  if (banner) banner.style.display = 'none';
-  console.log("Kullanıcı çerezleri reddetti, sadece IP verisi toplanıyor.");
-  trackMinimalSession();
-}
-
-// Gelişmiş Çerez Yönetim Fonksiyonları
-
-// Tüm çerezleri kabul et (manuel)
-function acceptAllCookies() {
-  console.log('Tüm çerezler manuel olarak kabul ediliyor...');
-  
-  const preferences = {
-    essential: true,
-    analytics: true,
-    marketing: true
-  };
-  
-  cookieConsent = true;
-  setCookie('cookieConsent', 'accepted', 365);
-  setCookie('cookiePreferences', JSON.stringify(preferences), 365);
-  
-  const banner = document.getElementById('cookieConsent');
-  if (banner) banner.style.display = 'none';
-  
-  console.log('Tüm çerezler manuel kabul edildi:', preferences);
-  startTracking();
-}
-
-// Özel çerez seçimlerini kaydet
-function saveCustomCookies() {
-  const preferences = {
-    essential: true,
-    analytics: document.getElementById('analytics').checked,
-    marketing: document.getElementById('marketing').checked
-  };
-  
-  cookieConsent = true;
-  setCookie('cookieConsent', 'accepted', 365);
-  setCookie('cookiePreferences', JSON.stringify(preferences), 365);
-  
-  const banner = document.getElementById('cookieConsent');
-  if (banner) banner.style.display = 'none';
-  
-  console.log('Özel çerez tercihleri kaydedildi:', preferences);
-  
-  if (preferences.analytics) {
-    startTracking();
-  } else {
-    trackMinimalSession();
-  }
-}
-
-// Tüm çerezleri reddet
-function rejectAllCookies() {
-  console.log('Tüm çerezler reddediliyor...');
-  
-  const preferences = {
-    essential: true,
-    analytics: false,
-    marketing: false
-  };
-  
-  cookieConsent = false;
-  setCookie('cookieConsent', 'rejected', 365);
-  setCookie('cookiePreferences', JSON.stringify(preferences), 365);
-  
-  const banner = document.getElementById('cookieConsent');
-  if (banner) banner.style.display = 'none';
-  
-  console.log('Çerezler reddedildi, sadece zorunlu çerezler aktif:', preferences);
-  trackMinimalSession();
-}
-
-// Detaylı çerez bilgilerini göster
-function showCookieDetails() {
-  const detailsModal = `
-    <div id="cookieDetailsModal" style="
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      z-index: 10000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: 'Poppins', sans-serif;
-    ">
-      <div style="
-        background: white;
-        padding: 30px;
-        border-radius: 15px;
-        max-width: 700px;
-        width: 90%;
-        max-height: 80%;
-        overflow-y: auto;
-        color: #333;
-      ">
-        <h2 style="color: #2c3e50; margin-bottom: 20px; text-align: center;">🍪 Detaylı Çerez Bilgileri</h2>
-        
-        <div style="margin-bottom: 20px;">
-          <h3 style="color: #e74c3c;">🔒 Zorunlu Çerezler</h3>
-          <p><strong>Amaç:</strong> Sitenin temel işlevlerini sağlamak için gereklidir.</p>
-          <p><strong>Süre:</strong> Oturum süresi boyunca</p>
-          <p><strong>Örnekler:</strong> Güvenlik, dil tercihi, form verileri</p>
-        </div>
-        
-        <div style="margin-bottom: 20px;">
-          <h3 style="color: #3498db;">📊 İstatistik Çerezleri</h3>
-          <p><strong>Amaç:</strong> Site kullanımını analiz etmek ve performansı artırmak</p>
-          <p><strong>Süre:</strong> 2 yıl</p>
-          <p><strong>Örnekler:</strong> Sayfa görüntüleme, kullanıcı davranışları, hata raporları</p>
-          <p><strong>Veri İşleyiciler:</strong> Google Analytics, Firebase</p>
-        </div>
-        
-        <div style="margin-bottom: 30px;">
-          <h3 style="color: #f39c12;">🎯 Pazarlama Çerezleri</h3>
-          <p><strong>Amaç:</strong> Kişiselleştirilmiş içerik ve reklamlar sunmak</p>
-          <p><strong>Süre:</strong> 1 yıl</p>
-          <p><strong>Örnekler:</strong> Reklam tercihleri, sosyal medya entegrasyonu</p>
-          <p><strong>Veri İşleyiciler:</strong> Sosyal medya platformları</p>
-        </div>
-        
-        <div style="text-align: center;">
-          <button onclick="closeCookieDetails()" style="
-            padding: 12px 30px;
-            background: #2c3e50;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1rem;
-          ">Kapat</button>
-        </div>
-      </div>
-    </div>
-  `;
-  
-  document.body.insertAdjacentHTML('beforeend', detailsModal);
-}
-
-// Çerez detayları modalını kapat
-function closeCookieDetails() {
-  const modal = document.getElementById('cookieDetailsModal');
-  if (modal) {
-    modal.remove();
-  }
-}
-
-// Global erişim için window'a ekle
-window.acceptCookies = acceptCookies;
-window.rejectCookies = rejectCookies;
-window.acceptAllCookies = acceptAllCookies;
-window.saveCustomCookies = saveCustomCookies;
-window.rejectAllCookies = rejectAllCookies;
-window.showCookieDetails = showCookieDetails;
-window.closeCookieDetails = closeCookieDetails;
-
-
-
+// Oturum takibi başlat
+trackSession();
       document.getElementById('feedback').addEventListener('submit', async function(e) {
         e.preventDefault();
 
