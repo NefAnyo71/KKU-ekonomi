@@ -16,17 +16,22 @@
  
     body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #1e1e2f, #2c2c44);
+      background: linear-gradient(-45deg, #1e1e2f, #2c2c44, #3a3a5a, #4d4d7f);
+      background-size: 400% 400%;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #fff;
       padding: 20px;
+      animation: gradientBG 15s ease infinite;
     }
  
     .card {
-      background: rgba(30, 30, 50, 0.95);
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       padding: 30px 40px;
       border-radius: 20px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
@@ -36,7 +41,7 @@
     }
  
     .card h1 {
-      font-size: 2rem;
+      font-size: 2.2rem;
       color: #ffcc00;
       margin-bottom: 25px;
       text-align: center;
@@ -54,9 +59,18 @@
       font-size: 0.9rem;
     }
  
+    .form-group .icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255, 255, 255, 0.5);
+      transition: color 0.3s;
+    }
+
     .form-group input {
       width: 100%;
-      padding: 12px 15px;
+      padding: 12px 15px 12px 45px; /* İkon için sol boşluk */
       background: rgba(255, 255, 255, 0.1);
       border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 8px;
@@ -70,6 +84,10 @@
       border-color: #ffcc00;
       box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.3);
     }
+
+    .form-group input:focus + .icon {
+      color: #ffcc00;
+    }
  
     .btn-submit {
       width: 100%;
@@ -81,7 +99,8 @@
       font-size: 1.1rem;
       font-weight: 600;
       cursor: pointer;
-      transition: background-color 0.3s, transform 0.2s;
+      transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+      position: relative;
     }
  
     .btn-submit.loading {
@@ -111,6 +130,11 @@
     .btn-submit:hover {
       background: #ffd633;
       transform: translateY(-2px);
+      box-shadow: 0 8px 15px rgba(255, 204, 0, 0.2);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0) scale(0.98);
     }
  
     .success-message, .error-message, #already-applied-message {
@@ -152,6 +176,12 @@
       background: rgba(255, 255, 255, 0.2);
     }
 
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
@@ -178,14 +208,17 @@
       <form id="basvuru-formu" novalidate>
         <div class="form-group">
           <label for="name">Adınız Soyadınız</label>
+          <i class="fas fa-user icon"></i>
           <input type="text" id="name" placeholder="Örn: Ahmet Yılmaz" required>
         </div>
         <div class="form-group">
           <label for="phone">Telefon Numaranız</label>
+          <i class="fas fa-phone icon"></i>
           <input type="tel" id="phone" placeholder="Örn: 5551234567" required pattern="[0-9]{10,11}">
         </div>
         <div class="form-group">
           <label for="department">Okuduğunuz Bölüm</label>
+          <i class="fas fa-graduation-cap icon"></i>
           <input type="text" id="department" placeholder="Örn: İktisat" required>
         </div>
         <button type="submit" class="btn-submit">
