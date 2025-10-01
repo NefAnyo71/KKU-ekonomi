@@ -37,7 +37,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background-color: rgba(30, 30, 47, 0.85); /* Koyu katman */
+      background-color: rgba(30, 30, 47, 0.85); 
       z-index: -1;
     }
  
@@ -84,7 +84,7 @@
 
     .form-group input {
       width: 100%;
-      padding: 12px 15px 12px 45px; /* İkon için sol boşluk */
+      padding: 12px 15px 12px 45px; 
       background: rgba(255, 255, 255, 0.1);
       border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 8px;
@@ -202,7 +202,7 @@
     @media (max-width: 600px) {
       .card {
         padding: 20px;
-        animation-delay: 0.3s; /* Mobil için animasyon gecikmesi */
+        animation-delay: 0.3s; 
       }
       .card h1 {
         font-size: 1.8rem;
@@ -351,7 +351,6 @@
     }
   </script>
   <script type="module">
-    // --- Çerez (Cookie) Yardımcı Fonksiyonları ---
     function setCookie(name, value, days) {
       let expires = "";
       if (days) {
@@ -372,8 +371,6 @@
       }
       return null;
     }
-
-    // Firebase yapılandırmasını proxy sunucudan al
     async function fetchFirebaseConfig() {
       try {
         const response = await fetch('https://proxyserver-flax.vercel.app/api/config');
@@ -443,8 +440,7 @@
               timestamp: serverTimestamp()
             });
 
-            setCookie('tanismaBasvurusuYapildi', 'true', 365); // 1 yıl geçerli çerez
-
+            setCookie('tanismaBasvurusuYapildi', 'true', 365); // 1 yıl boyunca saklanıcak bu çerez
             document.getElementById('form-container').style.display = 'none';
             document.getElementById('payment-info-message').style.display = 'block';
             document.getElementById('error-message').style.display = 'none';
