@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bolu Yedigöller Gölcük Gezisi Başvurusu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+ 
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-image: url('images/hero-bg.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      padding: 20px;
+      position: relative;
+      z-index: 0;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(30, 30, 47, 0.85); 
+      z-index: -1;
+    }
+ 
+    .card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 30px 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      animation: fadeIn 1.5s ease-in-out;
+      width: 100%;
+      max-width: 500px;
+    }
+ 
+    .card h1 {
+      font-size: 2.2rem;
+      color: #ffcc00;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+ 
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+ 
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #ccc;
+      font-size: 0.9rem;
+    }
+ 
+    .form-group .icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255, 255, 255, 0.5);
+      transition: color 0.3s;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 15px 12px 45px; 
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1rem;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+ 
+    .form-group input:focus {
+      outline: none;
+      border-color: #ffcc00;
+      box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.3);
+    }
+
+    .form-group input:focus + .icon {
+      color: #ffcc00;
+    }
+ 
+    .btn-submit {
+      width: 100%;
+      padding: 15px;
+      background: #ffcc00;
+      color: #1e1e2f;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+      position: relative;
+    }
+ 
+    .btn-submit.loading {
+      cursor: not-allowed;
+      background: #c7a100;
+    }
+
+    .btn-submit .spinner {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #1e1e2f;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    .btn-submit.loading .btn-text {
+      display: none;
+    }
+
+    .btn-submit.loading .spinner {
+      display: block;
+    }
+
+    .btn-submit:hover {
+      background: #ffd633;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 15px rgba(255, 204, 0, 0.2);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0) scale(0.98);
+    }
+ 
+    .success-message, .error-message, #already-applied-message {
+      display: none;
+      text-align: center;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+ 
+    .success-message {
+      background-color: rgba(45, 206, 137, 0.2);
+      color: #2dce89;
+    }
+ 
+    .error-message {
+      background-color: rgba(245, 54, 92, 0.2);
+      color: #f5365c;
+    }
+ 
+    .success-message i, .error-message i, #already-applied-message i {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .btn-back {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: background-color 0.3s;
+    }
+
+    .btn-back:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+ 
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+ 
+    @media (max-width: 600px) {
+      .card {
+        padding: 20px;
+        animation-delay: 0.3s; 
+      }
+      .card h1 {
+        font-size: 1.8rem;
+      }
+    }
+
+    .payment-details {
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 10px;
+      padding: 25px;
+      margin-top: 25px;
+      text-align: left;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .payment-details h3 {
+      color: #ffcc00;
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding-bottom: 15px;
+    }
+
+    .payment-details p {
+      color: #eee;
+      margin-bottom: 15px;
+      font-size: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .payment-details p strong {
+      color: #ccc;
+      min-width: 120px;
+    }
+
+    .payment-details .iban-container {
+      display: flex;
+      align-items: center;
+      background: rgba(0,0,0,0.3);
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-top: 5px;
+    }
+
+    .payment-details .iban-container span {
+      flex-grow: 1;
+    }
+
+    .payment-details .copy-btn {
+      background: none;
+      border: none;
+      color: #ffcc00;
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div id="form-container">
+      <h1>Bolu Yedigöller Gölcük Gezisi Başvurusu</h1>
+      <form id="basvuru-formu" novalidate>
+        <div class="form-group">
+          <label for="name">Adınız Soyadınız</label>
+          <i class="fas fa-user icon"></i>
+          <input type="text" id="name" placeholder="Örn: Ahmet Yılmaz" required>
+        </div>
+        <div class="form-group">
+          <label for="studentNumber">Öğrenci Numaranız</label>
+          <i class="fas fa-id-card icon"></i>
+          <input type="text" id="studentNumber" placeholder="Örn: 20220001" required>
+        </div>
+        <div class="form-group">
+          <label for="tcNumber">TC Kimlik Numaranız</label>
+          <i class="fas fa-id-badge icon"></i>
+          <input type="text" id="tcNumber" placeholder="11 haneli TC kimlik numaranız" required pattern="[0-9]{11}">
+        </div>
+        <div class="form-group">
+          <label for="phone">Telefon Numaranız</label>
+          <i class="fas fa-phone icon"></i>
+          <input type="tel" id="phone" placeholder="Örn: 5551234567" required pattern="[0-9]{10,11}">
+        </div>
+        <div class="form-group">
+          <label for="department">Okuduğunuz Bölüm</label>
+          <i class="fas fa-graduation-cap icon"></i>
+          <input type="text" id="department" placeholder="Örn: İktisat" required>
+        </div>
+        <button type="submit" class="btn-submit">
+          <span class="btn-text">Başvuruyu Gönder</span>
+          <div class="spinner"></div>
+        </button>
+      </form>
+    </div>
+    <div id="success-message" class="success-message">
+      <i class="fas fa-check-circle"></i>
+      <h2>Başvurunuz Alındı!</h2>
+      <p>Bolu Yedigöller Gölcük gezimizde görüşmek üzere!</p>
+      <a href="index.html" class="btn-back">Ana Sayfaya Dön</a>
+    </div>
+    <div id="payment-info-message" class="success-message" style="display: none;">
+      <i class="fas fa-check-circle"></i>
+      <h2>Başvurunuz Alındı!</h2>
+      <p>Bolu Yedigöller Gölcük gezimize katılımınızı kesinleştirmek için lütfen aşağıdaki adımları takip edin.</p>
+      <div class="payment-details">
+        <h3>Ödeme Bilgileri</h3>
+        <p><strong>Etkinlik Ücreti:</strong> 300 TL</p>
+        <p><strong>Alıcı Adı:</strong> <span>Yiğit Kaptanoğlu</span></p>
+        <p><strong>IBAN:</strong> 
+          <div class="iban-container">
+            <span id="iban-text">TR79 0001 0090 1023 7441 8050 02</span>
+            <button class="copy-btn" onclick="copyIBAN()"><i class="far fa-copy"></i></button>
+          </div>
+        </p>
+        <p style="color: #ff4d4d; margin-top: 20px; font-weight: bold;"><i class="fas fa-exclamation-triangle"></i> Önemli: Açıklama kısmına Adınızı ve Soyadınızı yazmayı unutmayın.</p>
+      </div>
+      <a href="index.html" class="btn-back">Ana Sayfaya Dön</a>
+    </div>
+    <div id="error-message" class="error-message">
+      <i class="fas fa-times-circle"></i>
+      <h2>Bir Hata Oluştu!</h2>
+      <p id="error-text">Lütfen daha sonra tekrar deneyin veya bizimle iletişime geçin.</p>
+      <a href="index.html" class="btn-back">Ana Sayfaya Dön</a>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+
+  <script>
+    function copyIBAN() {
+      const ibanText = document.getElementById('iban-text').innerText;
+      navigator.clipboard.writeText(ibanText).then(() => {
+        const copyBtn = document.querySelector('.copy-btn');
+        const originalIcon = copyBtn.innerHTML;
+        copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+        setTimeout(() => {
+          copyBtn.innerHTML = originalIcon;
+        }, 2000);
+      }).catch(err => {
+        console.error('IBAN kopyalanamadı: ', err);
+      });
+    }
+  </script>
+  <script type="module">
+    async function fetchFirebaseConfig() {
+      try {
+        const response = await fetch('https://proxyserver-flax.vercel.app/api/config');
+        if (!response.ok) {
+          throw new Error(`Sunucu hatası: ${response.status}`);
+        }
+        const config = await response.json();
+        return config.data;
+      } catch (error) {
+        console.error('Firebase yapılandırması alınamadı:', error);
+        showError('Sistem yapılandırması yüklenemedi. İnternet bağlantınızı kontrol edin.');
+        document.getElementById('form-container').style.display = 'none';
+        return null;
+      }
+    }
+
+    async function initializeFirebase() {
+      const firebaseConfig = await fetchFirebaseConfig();
+      if (!firebaseConfig) return;
+
+      try {
+        const { initializeApp } = await import('https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js');
+        const { getFirestore, collection, addDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js');
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const form = document.getElementById('basvuru-formu');
+        const submitButton = form.querySelector('.btn-submit');
+
+        form.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          if (submitButton.classList.contains('loading')) return;
+
+          const name = document.getElementById('name').value.trim();
+          const studentNumber = document.getElementById('studentNumber').value.trim();
+          const tcNumber = document.getElementById('tcNumber').value.trim();
+          const phone = document.getElementById('phone').value.trim();
+          const department = document.getElementById('department').value.trim();
+
+          // Doğrulama
+          if (name.split(' ').length < 2) {
+            alert('Lütfen adınızı ve soyadınızı tam olarak girin.');
+            return;
+          }
+          if (!/^[0-9]{11}$/.test(tcNumber)) {
+            alert('Lütfen geçerli bir TC kimlik numarası girin (11 haneli).');
+            return;
+          }
+          if (!/^[0-9]{10,11}$/.test(phone)) {
+            alert('Lütfen geçerli bir telefon numarası girin (10 veya 11 haneli).');
+            return;
+          }
+          if (studentNumber.length < 4) {
+            alert('Lütfen geçerli bir öğrenci numarası girin.');
+            return;
+          }
+          if (department.length < 3) {
+            alert('Lütfen geçerli bir bölüm adı girin.');
+            return;
+          }
+
+          setLoading(true);
+
+          try {
+            await addDoc(collection(db, "gezi3"), {
+              name: name,
+              studentNumber: studentNumber,
+              tcNumber: tcNumber,
+              phone: phone,
+              department: department,
+              timestamp: serverTimestamp()
+            });
+
+            document.getElementById('form-container').style.display = 'none';
+            document.getElementById('payment-info-message').style.display = 'block';
+            document.getElementById('error-message').style.display = 'none';
+
+          } catch (error) {
+            console.error('Veri gönderilirken hata oluştu: ', error);
+            showError('Başvurunuz gönderilirken bir hata oluştu. Lütfen internet bağlantınızı kontrol edip tekrar deneyin.');
+          } finally {
+            setLoading(false);
+          }
+        });
+
+        function setLoading(isLoading) {
+          if (isLoading) {
+            submitButton.classList.add('loading');
+          } else {
+            submitButton.classList.remove('loading');
+          }
+        }
+
+      } catch (error) {
+        console.error('Firebase başlatılırken hata oluştu:', error);
+        showError('Sistem başlatılamadı. Lütfen sayfayı yenileyin.');
+      }
+    }
+
+    function showError(message) {
+        document.getElementById('form-container').style.display = 'none';
+        const errorElement = document.getElementById('error-message');
+        errorElement.querySelector('#error-text').textContent = message;
+        errorElement.style.display = 'block';
+    }
+
+    initializeFirebase();
+  </script>
+
+</body>
+</html>
