@@ -30,6 +30,15 @@
       z-index: 0;
     }
 
+    @media (max-width: 600px) {
+      body {
+        align-items: flex-start;
+        padding: 10px;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+    }
+
     body::before {
       content: '';
       position: absolute;
@@ -240,11 +249,36 @@
  
     @media (max-width: 600px) {
       .card {
-        padding: 20px;
-        animation-delay: 0.3s; 
+        padding: 15px;
+        animation-delay: 0.3s;
+        margin: 10px 0;
+        max-width: 100%;
+        width: 100%;
       }
       .card h1 {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
+        margin-bottom: 20px;
+      }
+      .payment-details {
+        padding: 15px;
+        margin-top: 15px;
+      }
+      .payment-details h3 {
+        font-size: 1.3rem;
+      }
+      .payment-details p {
+        font-size: 0.9rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+      }
+      .iban-container {
+        width: 100%;
+        margin-top: 8px;
+      }
+      .iban-container span {
+        font-size: 0.85rem;
+        word-break: break-all;
       }
     }
 
@@ -437,6 +471,7 @@
           </div>
         </p>
         <p style="color: #ff4d4d; margin-top: 20px; font-weight: bold;"><i class="fas fa-exclamation-triangle"></i> Önemli: Açıklama kısmına Adınızı ve Soyadınızı yazmayı unutmayın.</p>
+        <p style="color: #ffa500; margin-top: 15px; font-weight: 600; text-align: center;"><i class="fas fa-info-circle"></i> Ücreti ödendikten sonra iade yapılmamaktadır.</p>
       </div>
       <a href="index.html" class="btn-back">Ana Sayfaya Dön</a>
     </div>
