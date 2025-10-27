@@ -262,9 +262,64 @@
       cursor: pointer;
       font-size: 1.1rem;
     }
+
+    .intro-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #1e1e2f 0%, #2d2d4a 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      animation: fadeOut 0.5s ease-in-out 2.5s forwards;
+    }
+
+    .intro-image {
+      width: 300px;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      animation: zoomIn 1s ease-in-out;
+    }
+
+    .intro-text {
+      color: #ffcc00;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-top: 20px;
+      text-align: center;
+      animation: slideUp 1s ease-in-out 0.5s both;
+    }
+
+    @keyframes zoomIn {
+      from { transform: scale(0.5); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes fadeOut {
+      to { opacity: 0; visibility: hidden; }
+    }
   </style>
 </head>
 <body>
+  <div class="intro-screen" id="intro-screen">
+    <img src="images/bolugezisi.png" alt="Bolu Gezisi" class="intro-image">
+    <div class="intro-text">
+      Bolu Yedigöller Gölcük Gezisi<br>
+      <span style="font-size: 1.2rem; color: #fff;">Gezi Ücreti: 1200 TL</span>
+    </div>
+  </div>
+
   <div class="card">
     <div id="form-container">
       <h1>Bolu Yedigöller Gölcük Gezisi Başvurusu</h1>
@@ -312,7 +367,7 @@
       <p>Bolu Yedigöller Gölcük gezimize katılımınızı kesinleştirmek için lütfen aşağıdaki adımları takip edin.</p>
       <div class="payment-details">
         <h3>Ödeme Bilgileri</h3>
-        <p><strong>Etkinlik Ücreti:</strong> 1200 TL</p>
+        <p><strong>Gezi Ücreti:</strong> 1200 TL</p>
         <p><strong>Alıcı Adı:</strong> <span>Yiğit Kaptanoğlu</span></p>
         <p><strong>IBAN:</strong> 
           <div class="iban-container">
