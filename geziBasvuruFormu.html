@@ -706,6 +706,20 @@
       
       const date = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleDateString('tr-TR') : 'Bilinmiyor';
       
+      let paymentStatus = '';
+      let paymentColor = '';
+      let paymentIcon = '';
+      
+      if (data.odemeDurumu === true) {
+        paymentStatus = 'Ödeme yapılmıştır';
+        paymentColor = '#2dce89';
+        paymentIcon = 'fas fa-check-circle';
+      } else {
+        paymentStatus = 'Ödeme yapılmamıştır - Ödeme doğrulamanız birkaç saat içerisinde onaylanıcaktır';
+        paymentColor = '#ffa500';
+        paymentIcon = 'fas fa-clock';
+      }
+      
       detailsDiv.innerHTML = `
         <p><strong>Ad Soyad:</strong> ${data.name}</p>
         <p><strong>Öğrenci No:</strong> ${data.studentNumber}</p>
@@ -714,7 +728,8 @@
         <p><strong>Bölüm:</strong> ${data.department}</p>
         <p><strong>Başvuru Tarihi:</strong> ${date}</p>
         <p style="color: #ffcc00; font-weight: bold; margin-top: 15px;"><i class="fas fa-check-circle"></i> Başvurunuz alınmıştır</p>
-        <p style="color: #ffa500; margin-top: 10px;"><i class="fas fa-credit-card"></i> Ödeme Durumu: Kontrol edilmeli</p>
+        <p style="color: ${paymentColor}; margin-top: 10px; font-weight: 600;"><i class="${paymentIcon}"></i> ${paymentStatus}</p>
+        ${data.odemeDurumu !== true ? '<p style="color: #ccc; font-size: 0.9rem; margin-top: 8px; font-style: italic;">Ödeme kontrolü manuel olarak yönetici tarafından kontrol edilmektedir.</p>' : ''}
       `;
       
       document.getElementById('form-container').style.display = 'none';
