@@ -548,16 +548,25 @@
       }
     }
 
+    let db, collection, addDoc, serverTimestamp, query, where, getDocs;
+
     async function initializeFirebase() {
       const firebaseConfig = await fetchFirebaseConfig();
       if (!firebaseConfig) return;
 
       try {
         const { initializeApp } = await import('https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js');
-        const { getFirestore, collection, addDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js');
+        const firestoreModule = await import('https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js');
+        
+        collection = firestoreModule.collection;
+        addDoc = firestoreModule.addDoc;
+        serverTimestamp = firestoreModule.serverTimestamp;
+        query = firestoreModule.query;
+        where = firestoreModule.where;
+        getDocs = firestoreModule.getDocs;
 
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        db = firestoreModule.getFirestore(app);
 
         const form = document.getElementById('basvuru-formu');
         const submitButton = form.querySelector('.btn-submit');
@@ -602,7 +611,6 @@
           
           // TC kimlik kontrolü
           try {
-            const { query, where, getDocs } = await import('https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js');
             const q = query(collection(db, "gezi3"), where("tcNumber", "==", tcNumber));
             const querySnapshot = await getDocs(q);
             
@@ -674,7 +682,6 @@
       checkBtn.classList.add('loading');
       
       try {
-        const { query, where, getDocs } = await import('https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js');
         const q = query(collection(db, "gezi3"), where("tcNumber", "==", tcNumber));
         const querySnapshot = await getDocs(q);
         
