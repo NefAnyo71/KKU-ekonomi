@@ -720,6 +720,23 @@
         paymentIcon = 'fas fa-clock';
       }
       
+      let paymentDetailsHTML = '';
+      if (data.odemeDurumu !== true) {
+        paymentDetailsHTML = `
+          <div style="background: rgba(0, 0, 0, 0.25); border-radius: 10px; padding: 20px; margin-top: 20px; border: 1px solid rgba(255, 255, 255, 0.1);">
+            <h4 style="color: #ffcc00; text-align: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.2); padding-bottom: 10px;">Ödeme Bilgileri</h4>
+            <p style="margin-bottom: 10px; display: flex; justify-content: space-between;"><strong>Gezi Ücreti:</strong> 1200 TL</p>
+            <p style="margin-bottom: 10px; display: flex; justify-content: space-between;"><strong>Alıcı Adı:</strong> Yiğit Kaptanoğlu</p>
+            <p style="margin-bottom: 15px;"><strong>IBAN:</strong></p>
+            <div style="display: flex; align-items: center; background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 6px; margin-bottom: 15px;">
+              <span style="flex-grow: 1; font-family: monospace; font-size: 0.9rem;">TR79 0001 0090 1023 7441 8050 02</span>
+              <button onclick="navigator.clipboard.writeText('TR79 0001 0090 1023 7441 8050 02').then(() => alert('İBAN kopyalandı!'))" style="background: none; border: none; color: #ffcc00; cursor: pointer; font-size: 1.1rem;"><i class="far fa-copy"></i></button>
+            </div>
+            <p style="color: #ff4d4d; font-weight: bold; font-size: 0.9rem; text-align: center;"><i class="fas fa-exclamation-triangle"></i> Önemli: Açıklama kısmına Adınızı ve Soyadınızı yazmayı unutmayın.</p>
+          </div>
+        `;
+      }
+      
       detailsDiv.innerHTML = `
         <p><strong>Ad Soyad:</strong> ${data.name}</p>
         <p><strong>Öğrenci No:</strong> ${data.studentNumber}</p>
@@ -730,6 +747,7 @@
         <p style="color: #ffcc00; font-weight: bold; margin-top: 15px;"><i class="fas fa-check-circle"></i> Başvurunuz alınmıştır</p>
         <p style="color: ${paymentColor}; margin-top: 10px; font-weight: 600;"><i class="${paymentIcon}"></i> ${paymentStatus}</p>
         ${data.odemeDurumu !== true ? '<p style="color: #ccc; font-size: 0.9rem; margin-top: 8px; font-style: italic;">Ödeme kontrolü manuel olarak yönetici tarafından kontrol edilmektedir.</p>' : ''}
+        ${paymentDetailsHTML}
       `;
       
       document.getElementById('form-container').style.display = 'none';
